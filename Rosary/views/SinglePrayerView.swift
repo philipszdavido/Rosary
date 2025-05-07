@@ -1,0 +1,153 @@
+//
+//  SinglePrayerView.swift
+//  Rosary
+//
+//  Created by Chidume Nnamdi on 24/04/2025.
+//
+
+import SwiftUI
+
+struct SinglePrayerView: View {
+    
+    @StateObject private var speaker = PrayerSpeaker()
+    @Binding var prayer: Prayer
+    
+    var body: some View {
+        Text(prayer.name)
+            .font(.headline)
+            .fontWeight(.bold)
+        
+        VStack {
+            
+            ScrollView {
+                
+                if (speaker.isSpeaking) {
+                    TextDisplayView(
+                        words: speaker.words,
+                        highlightIndex: speaker.currentWordIndex
+                    )
+                } else {
+                    
+                    Text(prayer.data)
+                        .font(
+                            Font?.init(
+                                .system(
+                                    size: 24,
+                                    weight: .bold,
+                                    design: .serif
+                                )
+                            )
+                        )
+                        .font(.body)
+                        .fontWeight(.regular)
+                        .multilineTextAlignment(.center)
+                        
+                        .padding(.top, 20.0)
+
+                }
+                                                
+            }
+                
+            Spacer()
+        }
+        .padding(.horizontal, 20.0)
+        
+        Spacer()
+        
+        HStack {
+            Button(action: {
+                speaker.speakPrayer(prayer.data)
+            }) {
+                Label("Speak Prayer", systemImage: "speaker.wave.2.fill")
+            }
+            .padding()
+            
+            Button(action: {
+                speaker.stopPrayer()
+            }) {
+                Label("Stop Prayer", systemImage: "stop.fill")
+            }
+            .padding()
+
+        }
+        
+    }
+}
+
+#Preview {
+    SinglePrayerView(
+        prayer:
+                .constant(
+                    Prayer(
+                        name: "Hail Mary",
+                        type: .single,
+                        data: PrayerData.hailMary
+                    )
+                )
+    )
+}
+
+struct TextDisplayView: View {
+    let words: [String]
+    let highlightIndex: Int
+    
+    var body: some View {
+        // Combine Text views for each word
+        words.enumerated().reduce(Text(""), { (result, pair) in
+            let (index, word) = pair
+            let styledWord: Text = index == highlightIndex
+            ? Text(word + " ")
+                .foregroundColor(.orange)
+                .bold() 
+                : Text(word + " ")
+            return result + styledWord
+        })
+        .font(
+            Font?.init(
+                .system(
+                    size: 24,
+                    weight: .bold,
+                    design: .serif
+                )
+            )
+        )
+        .font(.body)
+        .fontWeight(.regular)
+        .multilineTextAlignment(.center)
+        
+        .padding(.top, 20.0)
+
+    }
+}
+
+struct ItemsView: View {
+
+    let items: [String]
+    let highlightIndex: Int
+
+    var body: some View {
+        highlightWord
+                .padding()
+    }
+    
+    var highlightWord: Text {
+        var result = Text("")
+
+        for (index, item) in items.enumerated() {
+            let styledItem: Text
+
+            if index == highlightIndex {
+                styledItem = Text(item)
+                    .foregroundColor(.yellow)
+            } else {
+                styledItem = Text(item)
+            }
+            
+            result = result + Text(" ") + styledItem
+        }
+        
+        return result
+        
+    }
+    
+}

@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "E03AEE88-3DC6-4DF3-B1FF-DCA79F99A63B",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Rosary.xcodeproj",
+      "identifier" : "4F18D0C82DBA6BF100E25368",
+      "name" : "Rosary"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Rosary.xcodeproj",
+        "identifier" : "4F18D0DA2DBA6BF200E25368",
+        "name" : "RosaryTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Rosary.xcodeproj",
+        "identifier" : "4F18D0E42DBA6BF200E25368",
+        "name" : "RosaryUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

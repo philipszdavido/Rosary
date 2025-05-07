@@ -27,6 +27,7 @@
 		4F18D0C92DBA6BF100E25368 /* Rosary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rosary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F18D0DB2DBA6BF200E25368 /* RosaryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RosaryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F18D0E52DBA6BF200E25368 /* RosaryUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RosaryUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4FE25AF12DCBB2D200B6FC2E /* Rosary.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Rosary.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +76,7 @@
 		4F18D0C02DBA6BF100E25368 = {
 			isa = PBXGroup;
 			children = (
+				4FE25AF12DCBB2D200B6FC2E /* Rosary.xctestplan */,
 				4F18D0CB2DBA6BF100E25368 /* Rosary */,
 				4F18D0DE2DBA6BF200E25368 /* RosaryTests */,
 				4F18D0E82DBA6BF200E25368 /* RosaryUITests */,
