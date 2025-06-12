@@ -13,9 +13,18 @@ struct SinglePrayerView: View {
     @Binding var prayer: Prayer
     
     var body: some View {
+        
         Text(prayer.name)
-            .font(.headline)
-            .fontWeight(.bold)
+            .font(
+                Font?.init(
+                    .system(
+                        size: 24,
+                        weight: .bold,
+                        design: .default
+                    )
+                )
+            )
+        Divider()
         
         VStack {
             
@@ -34,7 +43,7 @@ struct SinglePrayerView: View {
                                 .system(
                                     size: 24,
                                     weight: .bold,
-                                    design: .serif
+                                    design: .default
                                 )
                             )
                         )
@@ -107,7 +116,7 @@ struct TextDisplayView: View {
                 .system(
                     size: 24,
                     weight: .bold,
-                    design: .serif
+                    design: .default
                 )
             )
         )
