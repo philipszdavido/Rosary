@@ -18,8 +18,12 @@ extension Color {
     }
 }
 
-let colors: [Color] = [.primary, .secondary, Color(red: 251/255, green: 128/255, blue: 128/255)]
+let colors: [Color] = [
+    .blue,
+    .orange,
+    Color(red: 251/255, green: 128/255, blue: 128/255)
+]
 
 var randomColor: Color {
-    colors.randomElement() ?? .blue
+    colors.randomElement() ?? Color(red: 251/255, green: 128/255, blue: 128/255)
 }

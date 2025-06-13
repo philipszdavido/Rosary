@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+extension Text {
+    public func white() -> Text {
+        return self.foregroundStyle(.gray)
+    }
+}
+
 struct RosaryView: View {
     
     @Binding var prayer: Prayer
@@ -14,20 +20,46 @@ struct RosaryView: View {
     @State var currentBead: Int = 0;
     @StateObject private var speaker: RosarySpeaker = RosarySpeaker()
     @State var rosaryType = RosaryType.none
+    private let decade = 5
+    @Environment(\.dismiss) private var dismiss
     
     var prayerSequence: [Prayer] = []
 
     var body: some View {
-        Spacer()
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: {}) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
+        
+        HStack(alignment: .center) {
+            Button(action: { dismiss() }) {
+                Image(systemName: "chevron.left")
+            }.padding(.leading)
+            Spacer()
+            Text(prayer.name)
+                .font(
+                    Font?.init(
+                        .system(
+                            size: 24,
+                            weight: .bold,
+                            design: .default
+                        )
+                    )
+                )
+            Spacer()
+        }
+        Divider()
+
+        RoundedRectangle(cornerRadius: 2, style: .circular)
+            .fill(Color.gray.opacity(0.1))
+            .frame(height: 100)
+            .foregroundColor(.gray)
+            .padding(.horizontal, 5)
+            .overlay {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(RosaryMystery.today().rawValue).white()
+                        Text("Total Beads: \(numBeads)").white()
+                        Text("Current Bead: \(speaker.bead)").white()
+                    }.padding(.horizontal)
+                    Spacer()
+                }.padding(.horizontal)
             }
         
         RosaryDecadeView(decadeNumber: 2, currentBead: speaker.bead)
@@ -163,24 +195,7 @@ struct RosaryView: View {
     init(prayer: Binding<Prayer>) {
         
         self._prayer = prayer
-        
-        prayerSequence += [
-            
-            Prayer(name: "Sign Of The Cross", type: PrayerEnum.single, data: PrayerData.signOfTheCross),
-            
-            Prayer(
-            name: "Our Father",
-            type: PrayerEnum.single,
-            data: PrayerData.ourFather
-        )]
-        
-        for _ in 0..<numBeads {
-            prayerSequence += [
-                PrayerData.constructPrayer(PrayerData.hailMary, name: "Hail Mary"),
-            ]
-        }
-        
-        prayerSequence += [PrayerData.constructPrayer(PrayerData.gloryBe, name: "Glory Be")];
+        self.prayerSequence = RosaryUtils().constructRosary()
         
     }
     

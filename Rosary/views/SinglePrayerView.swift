@@ -11,19 +11,27 @@ struct SinglePrayerView: View {
     
     @StateObject private var speaker = PrayerSpeaker()
     @Binding var prayer: Prayer
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         
-        Text(prayer.name)
-            .font(
-                Font?.init(
-                    .system(
-                        size: 24,
-                        weight: .bold,
-                        design: .default
+        HStack {
+            Button(action: { dismiss() }) {
+                Image(systemName: "chevron.left")
+            }.padding(.leading)
+            Spacer()
+            Text(prayer.name)
+                .font(
+                    Font?.init(
+                        .system(
+                            size: 24,
+                            weight: .bold,
+                            design: .default
+                        )
                     )
                 )
-            )
+            Spacer()
+        }
         Divider()
         
         VStack {
@@ -84,16 +92,18 @@ struct SinglePrayerView: View {
 }
 
 #Preview {
-    SinglePrayerView(
-        prayer:
-                .constant(
-                    Prayer(
-                        name: "Hail Mary",
-                        type: .single,
-                        data: PrayerData.hailMary
+    NavigationStack{
+        SinglePrayerView(
+            prayer:
+                    .constant(
+                        Prayer(
+                            name: "Hail Mary",
+                            type: .single,
+                            data: PrayerData.hailMary
+                        )
                     )
-                )
-    )
+        )
+    }
 }
 
 struct TextDisplayView: View {

@@ -14,12 +14,15 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Selection@*/.constant(1)/*@END_MENU_TOKEN@*/) {
-            PrayersView()
-                .tabItem {
-                    Image(systemName: "book.pages")
-                    Text("Prayers")
-                }
-                .tag(1)
+            NavigationStack {
+                PrayersViewV2()
+            }
+            .tabItem {
+                Image(systemName: "book.pages")
+                Text("Prayers")
+            }
+            .tag(1)
+            
             
             SettingsView()
                 .tabItem {
@@ -27,7 +30,7 @@ struct ContentView: View {
                     Text("Settings")
                 }
                 .tag(2)
-
+            
         }
     }
 

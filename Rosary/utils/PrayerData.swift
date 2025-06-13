@@ -288,4 +288,8 @@ class PrayerData {
     Amen.
     """
     
+    static let fatima = """
+    O my Jesus, forgive us our sins, save us from the fires of hell, lead all souls to Heaven, especially those in most need of your mercy.
+    """
+    
 }

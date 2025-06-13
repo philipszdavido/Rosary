@@ -24,14 +24,14 @@ struct PrayersViewV2: View {
             // Header Section
             Section {
                 VStack(alignment: .leading) {
-                    Text("MONDAY, JUNE 12")
+                    Text(formattedToday())
                         .foregroundStyle(Color.gray.opacity(0.7))
                     Text("Today")
                         .font(.system(size: 34, weight: .heavy))
                 }
                 .padding(.horizontal)
             }
-            .listRowInsets(EdgeInsets()) // Remove default padding
+            .listRowInsets(EdgeInsets())
             .padding(.bottom)
 
             // Rosary Navigation Card
@@ -47,8 +47,12 @@ struct PrayersViewV2: View {
                         switch prayer.type {
                         case .rosary:
                             RosaryView(prayer: $prayer)
+                                .toolbar(.hidden, for: .tabBar)
+                                .navigationBarBackButtonHidden(true)
                         case .single:
                             SinglePrayerView(prayer: $prayer)
+                                .toolbar(.hidden, for: .tabBar)
+                                .navigationBarBackButtonHidden(true)
                         }
 
                     } label: {
@@ -88,26 +92,30 @@ struct HorizontalScrollViewSection: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach($quickPrayers) { $quickPrayer in
-                        NavigationLink {
-                            switch quickPrayer.type {
-                            case .rosary:
-                                RosaryView(prayer: $quickPrayer)
-                            case .single:
-                                SinglePrayerView(prayer: $quickPrayer)
-                            }
-                        } label: {
-                            RoundedRectangle(cornerRadius: 5, style: .continuous)
-                                .fill(randomColor)
-                                .frame(width: 150, height: 90)
-                                .overlay {
-                                    VStack {
-                                        Text(quickPrayer.name)
-                                            .fontWeight(.bold)
-                                            .multilineTextAlignment(.center)
-                                            .foregroundStyle(.white)
-                                            .font(.system(size: 15, weight: .medium))
-                                    }
+                        if $quickPrayer.wrappedValue.name != "Rosary" {
+                            ZStack {
+                                
+                                NavigationLink (
+                                    destination: SinglePrayerView(
+                                        prayer: $quickPrayer
+                                    )
+                                    .toolbar(.hidden, for: .tabBar)
+                                    .navigationBarBackButtonHidden(true)
+                                ) {
+                                    RoundedRectangle(cornerRadius: 5, style: .continuous)
+                                        .fill(randomColor)
+                                        .frame(width: 150, height: 90)
+                                        .overlay {
+                                            VStack {
+                                                Text(quickPrayer.name)
+                                                    .fontWeight(.bold)
+                                                    .multilineTextAlignment(.center)
+                                                    .foregroundStyle(.white)
+                                                    .font(.system(size: 15, weight: .medium))
+                                            }
+                                        }
                                 }
+                            }
                         }
                     }
                 }
@@ -125,28 +133,36 @@ struct RosaryNavigationCard: View {
     
     var body: some View {
         Section {
-            NavigationLink(
-                destination: RosaryView(prayer: $rosary)
-                    .navigationBarBackButtonHidden()
-            ) {
+            ZStack {
+                
                 RoundedRectangle(cornerRadius: 5, style: .continuous)
                     .fill(Color.blue)
                     .frame(height: 150)
                     .overlay {
-                        VStack {
+                        VStack(alignment: .center) {
                             Text("Say Rosary")
                                 .fontWeight(.bold)
+                                .multilineTextAlignment(.center)
                                 .foregroundStyle(.white)
                                 .font(.system(size: 44, weight: .medium))
-                            Text("Mystery")
+                            Text(RosaryMystery.today().rawValue)
                                 .fontWeight(.bold)
+                                .multilineTextAlignment(.center)
                                 .foregroundStyle(.white)
                                 .font(.system(size: 24, weight: .medium))
                         }
                     }
+
+                NavigationLink(
+                    destination: RosaryView(prayer: $rosary).toolbar(.hidden, for: .tabBar)
+                        .navigationBarBackButtonHidden(true)
+                ) {
+                    EmptyView()
+                }
+                .listRowInsets(EdgeInsets())
+                .padding(.horizontal)
+                .opacity(0)
             }
-            .listRowInsets(EdgeInsets())
-            .padding(.horizontal)
         }
 
     }
