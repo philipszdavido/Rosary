@@ -17,7 +17,6 @@ struct RosaryView: View {
     
     @Binding var prayer: Prayer
     let numBeads: Int = 59;
-    @State var currentBead: Int = 0;
     @StateObject private var speaker: RosarySpeaker = RosarySpeaker()
     @State var rosaryType = RosaryType.none
     private let decade = 5
@@ -63,7 +62,11 @@ struct RosaryView: View {
             }
         
         RosaryDecadeView(decadeNumber: 2, currentBead: speaker.bead)
-        
+        RosaryDecadeView(decadeNumber: 2, currentBead: speaker.bead)
+        RosaryDecadeView(decadeNumber: 2, currentBead: speaker.bead)
+        RosaryDecadeView(decadeNumber: 2, currentBead: speaker.bead)
+        RosaryDecadeView(decadeNumber: 2, currentBead: speaker.bead)
+
         VStack(alignment: .leading) {
             
             Text("Prayer")

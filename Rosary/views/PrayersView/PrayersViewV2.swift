@@ -32,6 +32,7 @@ struct PrayersViewV2: View {
                 .padding(.horizontal)
             }
             .listRowInsets(EdgeInsets())
+            .listRowSeparator(.hidden)
             .padding(.bottom)
 
             // Rosary Navigation Card
@@ -123,6 +124,7 @@ struct HorizontalScrollViewSection: View {
             }
         }
         .listRowInsets(EdgeInsets())
+        .listRowSeparator(.hidden)
         .padding(.top, 20)
     }
 }
@@ -163,7 +165,7 @@ struct RosaryNavigationCard: View {
                 .padding(.horizontal)
                 .opacity(0)
             }
-        }
+        }.listRowSeparator(.hidden)
 
     }
 }

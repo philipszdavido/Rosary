@@ -161,7 +161,7 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
 
 class RosarySpeaker: PrayerSpeaker {
     
-    @Published var bead = -1;
+    @Published var bead = 0;
     
     override init() {
         super.init()
