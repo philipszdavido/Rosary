@@ -26,6 +26,7 @@ struct RosaryApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(GlobalSettings())
         }
         .modelContainer(sharedModelContainer)
     }

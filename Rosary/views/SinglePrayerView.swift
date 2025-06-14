@@ -109,6 +109,7 @@ struct SinglePrayerView: View {
 struct TextDisplayView: View {
     let words: [String]
     let highlightIndex: Int
+    let settings = GlobalSettings()
     
     var body: some View {
         // Combine Text views for each word
@@ -116,8 +117,8 @@ struct TextDisplayView: View {
             let (index, word) = pair
             let styledWord: Text = index == highlightIndex
             ? Text(word + " ")
-                .foregroundColor(.orange)
-                .bold() 
+                .foregroundColor(settings.highlightColor)
+                .bold()
                 : Text(word + " ")
             return result + styledWord
         })
@@ -143,6 +144,7 @@ struct ItemsView: View {
 
     let items: [String]
     let highlightIndex: Int
+    let settings = GlobalSettings()
 
     var body: some View {
         highlightWord
@@ -157,7 +159,7 @@ struct ItemsView: View {
 
             if index == highlightIndex {
                 styledItem = Text(item)
-                    .foregroundColor(.yellow)
+                    .foregroundColor(settings.highlightColor)
             } else {
                 styledItem = Text(item)
             }
