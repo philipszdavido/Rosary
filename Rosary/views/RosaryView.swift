@@ -32,7 +32,7 @@ struct RosaryView: View {
             speaker: speaker
         )
         
-        RosarySimpleDecadeView(currentBeadIndex: speaker.bead)
+        RosarySimpleDecadeView(currentBeadIndex: speaker.bead, onBeadTap: onBeadTap)
 
         VStack(alignment: .leading) {
             
@@ -140,6 +140,12 @@ struct RosaryView: View {
         self._prayer = prayer
         self.prayerSequence = RosaryUtils().constructRosary()
         
+    }
+    
+    func onBeadTap(index: Int) {
+        speaker.stopPrayer();
+        speaker.currentPrayerIndex = index
+        speaker.speakNextPrayer()
     }
     
 }

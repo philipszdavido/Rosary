@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct BeadView: View {
-    var isCompleted: Bool
-    var isActive: Bool
-
+    let isCompleted: Bool
+    let isActive: Bool
+    
+    @State private var isTapped = false
+    
     var body: some View {
         Circle()
             .fill(isCompleted ? Color.green : (isActive ? Color.blue : Color.gray))
@@ -19,14 +21,22 @@ struct BeadView: View {
                 Circle().stroke(Color.white, lineWidth: 2)
             )
             .shadow(radius: 5)
-            .scaleEffect(isActive ? 1.2 : 1)  // Make the active bead slightly bigger
-            .animation(.spring(), value: isActive)  // Smooth animation for active beads
+            .scaleEffect(isTapped ? 1.4 : (isActive ? 1.2 : 1))
+            .animation(.spring(response: 0.3, dampingFraction: 0.4), value: isTapped)
+            .onTapGesture {
+                isTapped = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    isTapped = false
+                }
+            }
     }
 }
 
 struct OurFatherBeadView: View {
     var isCompleted: Bool
     var isActive: Bool
+
+    @State private var isTapped = false
 
     var body: some View {
         Circle()
@@ -36,8 +46,14 @@ struct OurFatherBeadView: View {
                 Circle().stroke(Color.white, lineWidth: 2)
             )
             .shadow(radius: 5)
-            .scaleEffect(isActive ? 1.2 : 1)  // Make the active bead slightly bigger
-            .animation(.spring(), value: isActive)  // Smooth animation for active beads
+            .scaleEffect(isTapped ? 1.4 : (isActive ? 1.2 : 1))
+            .animation(.spring(response: 0.3, dampingFraction: 0.4), value: isTapped)
+            .onTapGesture {
+                isTapped = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    isTapped = false
+                }
+            }
     }
 }
 
@@ -79,3 +95,4 @@ struct OurFatherBeadViewV2: View {
             //.animation(.spring(), value: isActive)  // Smooth animation for active beads
     }
 }
+

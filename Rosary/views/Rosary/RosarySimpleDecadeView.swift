@@ -10,6 +10,7 @@ import SwiftUI
 struct RosarySimpleDecadeView: View {
     
     public var currentBeadIndex: Int
+    public var onBeadTap: (_: Int) -> Void;
     
     let columns = [
         GridItem(.adaptive(minimum: 20), spacing: 20)
@@ -28,16 +29,25 @@ struct RosarySimpleDecadeView: View {
     var body: some View {
         LazyVGrid(columns: columns, spacing: 8) {
             ForEach(0..<59, id: \.self) { index in
+                
                 if isOurFather(index: index) {
+                    
                     OurFatherBeadView(
                         isCompleted: index == currentBeadIndex,
                         isActive: index < currentBeadIndex
-                    )
+                    ).onTapGesture {
+                        onBeadTap(index)
+                    }
+                    
                 } else {
+                    
                     BeadView(
                         isCompleted: index == currentBeadIndex,
                         isActive: index < currentBeadIndex
-                    )
+                    ).onTapGesture {
+                        onBeadTap(index)
+                    }
+                    
                 }
             }
         }
@@ -46,7 +56,7 @@ struct RosarySimpleDecadeView: View {
 }
 
 #Preview {
-    RosarySimpleDecadeView(currentBeadIndex: 2)
+    //RosarySimpleDecadeView(currentBeadIndex: 2, onBeadTap: () -> Void)
 }
 
 
