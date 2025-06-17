@@ -19,52 +19,54 @@ struct PrayersViewV2: View {
     @State var quickPrayers = PrayerData.prayers as [Prayer];
         
     var body: some View {
-        List {
-            
-            // Header Section
-            Section {
-                VStack(alignment: .leading) {
-                    Text(formattedToday())
-                        .foregroundStyle(Color.gray.opacity(0.7))
-                    Text("Today")
-                        .font(.system(size: 34, weight: .heavy))
-                }
-                .padding(.horizontal)
-            }
-            .listRowInsets(EdgeInsets())
-            .listRowSeparator(.hidden)
-            .padding(.bottom)
-
-            // Rosary Navigation Card
-            RosaryNavigationCard(rosary: $rosary)
-
-            // Horizontal ScrollView Section
-            HorizontalScrollViewSection(quickPrayers: $quickPrayers)
-
-            // List of prayers
-            Section {
-                ForEach($prayers) { $prayer in
-                    NavigationLink {
-                        switch prayer.type {
-                        case .rosary:
-                            RosaryView(prayer: $prayer)
-                                .toolbar(.hidden, for: .tabBar)
-                                .navigationBarBackButtonHidden(true)
-                        case .single:
-                            SinglePrayerView(prayer: $prayer)
-                                .toolbar(.hidden, for: .tabBar)
-                                .navigationBarBackButtonHidden(true)
-                        }
-
-                    } label: {
-                        Text(prayer.name)
-                            .padding(.vertical, 8)
+        NavigationStack {
+            List {
+                
+                // Header Section
+                Section {
+                    VStack(alignment: .leading) {
+                        Text(formattedToday())
+                            .foregroundStyle(Color.gray.opacity(0.7))
+                        Text("Today")
+                            .font(.system(size: 34, weight: .heavy))
                     }
+                    .padding(.horizontal)
                 }
-                .onDelete(perform: deleteItems)
+                .listRowInsets(EdgeInsets())
+                .listRowSeparator(.hidden)
+                .padding(.bottom)
+                
+                // Rosary Navigation Card
+                RosaryNavigationCard(rosary: $rosary)
+                
+                // Horizontal ScrollView Section
+                HorizontalScrollViewSection(quickPrayers: $quickPrayers)
+                
+                // List of prayers
+                Section {
+                    ForEach($prayers) { $prayer in
+                        NavigationLink {
+                            switch prayer.type {
+                            case .rosary:
+                                RosaryView(prayer: $prayer)
+                                    .toolbar(.hidden, for: .tabBar)
+                                    .navigationBarBackButtonHidden(true)
+                            case .single:
+                                SinglePrayerView(prayer: $prayer)
+                                    .toolbar(.hidden, for: .tabBar)
+                                    .navigationBarBackButtonHidden(true)
+                            }
+                            
+                        } label: {
+                            Text(prayer.name)
+                                .padding(.vertical, 8)
+                        }
+                    }
+                    .onDelete(perform: deleteItems)
+                }
             }
+            .listStyle(.plain)
         }
-        .listStyle(.plain)
     }
 
     func addItem() {

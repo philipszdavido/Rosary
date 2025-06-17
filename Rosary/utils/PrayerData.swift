@@ -52,6 +52,18 @@ class PrayerData {
         return Prayer(name: name, type: PrayerEnum.single, data: data)
     }
     
+    static var ourFatherPrayer: Prayer {
+        return PrayerData.constructPrayer(ourFather, name: "Our Father")
+    }
+    
+    static var hailMaryPrayer: Prayer {
+        return PrayerData.constructPrayer(hailMary, name: "Hail Mary")
+    }
+    
+    static var gloryBePrayer: Prayer {
+        return PrayerData.constructPrayer(gloryBe, name: "Glory Be")
+    }
+    
     static let ourFather = """
     Our Father,
     Who art in heaven,

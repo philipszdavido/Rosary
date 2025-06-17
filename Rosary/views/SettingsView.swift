@@ -13,20 +13,24 @@ struct SettingsView: View {
     
     var body: some View {
         
-        NavigationStack {
+        NavigationView {
             List {
-                Section  {
+                Section("Colors")  {
                     NavigationLink(
                         destination: ThemeSettingsView()
                     ) {
-                        Text("Theme (\(settings.isDarkModeEnabled ? "Dark" : "Light"))")
+                        Text("Theme (\(settings.theme == .dark ? "Dark" : "Light"))")
+                        settings.theme == .dark ? Image(systemName: "moon.fill") : Image(systemName: "sun.horizon")
                     }
                     
                     NavigationLink(
                         destination: HighlightColorSettingsView()
                     ) {
-                        Text("Highlight Color")
-                            .foregroundStyle(settings.highlightColor)
+                        HStack {
+                            Text("Highlight Color")
+                            Circle().fill(settings.highlightColor)
+                                .frame(width: 20, height: .infinity)
+                        }
                     }
                     
                 }
@@ -59,13 +63,20 @@ struct HighlightColorSettingsView: View {
 struct ThemeSettingsView: View {
 
     @EnvironmentObject var settings: GlobalSettings
-
+    
     var body: some View {
         
         VStack {
-            Toggle("Dark", isOn: $settings.isDarkModeEnabled)
+            Toggle("Dark", isOn: Binding<Bool>(
+                get: { settings.theme == .dark},
+                set: {_ in settings.theme = .dark}
+            ))
+            
             Divider()
-            Toggle("Light", isOn: $settings.isLightModeEnabled)
+            Toggle("Light", isOn: Binding<Bool>(
+                get: { settings.theme == .light},
+                set: {_ in settings.theme = .light}
+            ))
         }
         .padding()
         Spacer()
@@ -86,4 +97,5 @@ struct AboutView: View {
 #Preview {
     SettingsView()
         .environmentObject(GlobalSettings())
+        .preferredColorScheme(GlobalSettings().theme == .dark ? .dark : .light)
 }

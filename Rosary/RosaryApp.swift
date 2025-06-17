@@ -22,11 +22,14 @@ struct RosaryApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
+    
+    let settings = GlobalSettings()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(GlobalSettings())
+                .environmentObject(settings)
+                .preferredColorScheme(settings.theme == .dark ? .dark : .light)
         }
         .modelContainer(sharedModelContainer)
     }

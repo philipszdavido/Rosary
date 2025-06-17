@@ -16,56 +16,23 @@ extension Text {
 struct RosaryView: View {
     
     @Binding var prayer: Prayer
-    let numBeads: Int = 59;
     @StateObject private var speaker: RosarySpeaker = RosarySpeaker()
     @State var rosaryType = RosaryType.none
-    private let decade = 5
-    @Environment(\.dismiss) private var dismiss
     
     var prayerSequence: [Prayer] = []
-
+    
     var body: some View {
         
-        HStack(alignment: .center) {
-            Button(action: { dismiss() }) {
-                Image(systemName: "chevron.left")
-            }.padding(.leading)
-            Spacer()
-            Text(prayer.name)
-                .font(
-                    Font?.init(
-                        .system(
-                            size: 24,
-                            weight: .bold,
-                            design: .default
-                        )
-                    )
-                )
-            Spacer()
-        }
-        Divider()
-
-        RoundedRectangle(cornerRadius: 2, style: .circular)
-            .fill(Color.gray.opacity(0.1))
-            .frame(height: 100)
-            .foregroundColor(.gray)
-            .padding(.horizontal, 5)
-            .overlay {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(RosaryMystery.today().rawValue).white()
-                        Text("Total Beads: \(numBeads)").white()
-                        Text("Current Bead: \(speaker.bead)").white()
-                    }.padding(.horizontal)
-                    Spacer()
-                }.padding(.horizontal)
-            }
+        RosaryHeader(
+            prayer: prayer,
+            rosaryType: rosaryType,
+            pauseAction: {
+                speaker.pause()
+            },
+            speaker: speaker
+        )
         
-        RosaryDecadeView(decadeNumber: 1, currentBead: speaker.bead)
-        RosaryDecadeView(decadeNumber: 2, currentBead: speaker.bead)
-        RosaryDecadeView(decadeNumber: 3, currentBead: speaker.bead)
-        RosaryDecadeView(decadeNumber: 4, currentBead: speaker.bead)
-        RosaryDecadeView(decadeNumber: 5, currentBead: speaker.bead)
+        RosarySimpleDecadeView(currentBeadIndex: speaker.bead)
 
         VStack(alignment: .leading) {
             
@@ -135,51 +102,26 @@ struct RosaryView: View {
                 }
             } else {
                 
-                
-                
                 Group {
                     
                     if rosaryType == RosaryType.auto {
                         
-                        Button(action: {
-                            autoPrayer()
-                        }) {
-                            Label("Start", systemImage: "speaker.wave.2.fill")
-                        }
-                        .padding()
-                        
-                        Button(action: {
-                            pausePrayer()
-                        }) {
-                            Label("Pause", systemImage: "pause.fill")
-                        }
-                        .padding()
-                        
-                        Button(action: {
-                            speaker.stopPrayer()
-                        }) {
-                            Label("Stop", systemImage: "stop.fill")
-                        }
+                        AutoBottomBar(
+                            speaker: speaker,
+                            rosaryType: $rosaryType,
+                            prayerSequence: prayerSequence
+                        )
                         
                     }
                     
                     if rosaryType == RosaryType.manual {
-                        HStack {
-                            
-                            Button(action: {
-                                prevPrayer()
-                            }) {
-                                Label("Say Previous", systemImage: "arrowshape.backward.circle.fill")
-                            }
-                            .padding()
-                            
-                            Button(action: {
-                                nextPrayer()
-                            }) {
-                                Label("Say Prayer", systemImage: "arrowshape.forward.circle.fill")
-                            }
-                            
-                        }
+                        
+                        ManualBottomBar(
+                            speaker: speaker,
+                            rosaryType: $rosaryType,
+                            prayerSequence: prayerSequence
+                        )
+                        
                     }
                     
                 }
@@ -191,8 +133,6 @@ struct RosaryView: View {
             speaker.setPrayerQueue(prayerSequence)
         }
         
-        
-        
     }
     
     init(prayer: Binding<Prayer>) {
@@ -200,6 +140,64 @@ struct RosaryView: View {
         self._prayer = prayer
         self.prayerSequence = RosaryUtils().constructRosary()
         
+    }
+    
+}
+
+#Preview {
+    RosaryView(
+        prayer: .constant(Prayer(name: "Rosary", type: .rosary, data: ""))
+    )
+}
+
+
+struct AutoBottomBar: View {
+    
+    public var speaker: RosarySpeaker
+    @Binding var rosaryType: RosaryType
+    public var prayerSequence: [Prayer]
+    
+    var body: some View {
+        
+        Button(action: {
+            autoPrayer()
+        }) {
+            Label("Start", systemImage: "speaker.wave.2.fill")
+        }
+        .padding()
+        
+        if speaker.isSpeaking {
+            
+            Button(action: {
+                pausePrayer()
+            }) {
+                Label("Pause", systemImage: "pause.fill")
+            }
+            .padding()
+            
+            Button(action: {
+                speaker.stopPrayer()
+            }) {
+                Label("Stop", systemImage: "stop.fill")
+            }
+
+        }
+        
+        if !speaker.isSpeaking {
+            Button(action: {
+                resumePrayer()
+            }) {
+                Label("Resume", systemImage: "reload.circle.fill")
+            }
+            .padding()
+        }
+                
+        Button(action: {
+            rosaryType = .none
+        }) {
+            Label("Cancel", systemImage: "cancel.circle.fill")
+        }
+
     }
     
     func autoPrayer() {
@@ -213,8 +211,48 @@ struct RosaryView: View {
     }
     
     func pausePrayer() {
+        speaker.pause()
         
-        
+    }
+    
+    func resumePrayer() {
+        speaker.resume()
+    }
+
+
+}
+
+
+struct ManualBottomBar: View {
+    
+    public var speaker: RosarySpeaker
+    @Binding var rosaryType: RosaryType
+    public var prayerSequence: [Prayer]
+
+    var body: some View {
+        HStack {
+            
+            Button(action: {
+                prevPrayer()
+            }) {
+                Label("Say Previous", systemImage: "arrowshape.backward.circle.fill")
+            }
+            .padding()
+            
+            Button(action: {
+                nextPrayer()
+            }) {
+                Label("Say Prayer", systemImage: "arrowshape.forward.circle.fill")
+            }
+            
+            Button(action: {
+                speaker.stopPrayer();
+                rosaryType = .none
+            }) {
+                Label("Cancel", systemImage: "cancel.circle.fill")
+            }
+            
+        }
     }
     
     func nextPrayer() {
@@ -228,11 +266,5 @@ struct RosaryView: View {
         speaker.speakPreviousPrayer()
 
     }
-    
-}
 
-#Preview {
-    RosaryView(
-        prayer: .constant(Prayer(name: "Rosary", type: .rosary, data: ""))
-    )
 }

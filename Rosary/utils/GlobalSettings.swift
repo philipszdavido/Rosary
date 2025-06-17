@@ -9,6 +9,13 @@ import Foundation
 import SwiftUICore
 import UIKit
 
+enum Theme: Int {
+    //    case dark = 0
+    //    case light = 1
+    case light = 0
+        case dark = 1
+        case system = 2
+}
 
 extension UserDefaults {
     
@@ -29,36 +36,53 @@ extension UserDefaults {
         return Color(uiColor)
     }
     
+    func setTheme(theme: Theme) {
+        set(theme.rawValue, forKey: "theme")
+    }
+    
+    func getTheme() -> Theme {
+        guard let rawValue = integer(forKey: "theme") as? Int else {
+            return .dark
+        }
+        return Theme(rawValue: rawValue)!
+    }
+    
 }
 
 
 class GlobalSettings: ObservableObject {
     
-    @Published var isDarkModeEnabled: Bool = UserDefaults().bool(forKey: "isDarkModeEnabled")
+    let userDefaults = UserDefaults()
+    
+    @Published var theme: Theme
     {
         didSet {
             // update localstorage
-            UserDefaults.standard
-                .set(isDarkModeEnabled, forKey: "isDarkModeEnabled")
+            userDefaults.setTheme(theme: theme)
+
         }
     }
 
-    @Published var isLightModeEnabled: Bool = UserDefaults().bool(forKey: "isLightModeEnabled")
+    @Published var highlightColor: Color
     {
         didSet {
-            // update localstorage
-            UserDefaults.standard
-                .set(isLightModeEnabled, forKey: "isLightModeEnabled")
+            
+            userDefaults.setColor(color: highlightColor)
+            
         }
     }
-
-    @Published var highlightColor: Color = UserDefaults().getColor() ?? .orange
-    {
-        didSet {
-            
-            UserDefaults().setColor(color: highlightColor)
-            
-        }
+    
+    init(
+        theme: Theme,
+        highlightColor: Color
+    ) {
+        self.theme = theme
+        self.highlightColor = highlightColor
+    }
+    
+    init () {
+        self.theme = userDefaults.getTheme()
+        self.highlightColor = userDefaults.getColor() ?? .orange
     }
     
 }

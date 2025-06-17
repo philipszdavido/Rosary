@@ -18,22 +18,19 @@ class RosaryUtils {
             
             Prayer(name: "Sign Of The Cross", type: PrayerEnum.single, data: PrayerData.signOfTheCross),
             
-            PrayerData.constructPrayer(PrayerData.apostlesCreed, name: ""),
+            PrayerData.constructPrayer(PrayerData.apostlesCreed, name: "Apostles Creed"),
             
-            Prayer(
-            name: "Our Father",
-            type: PrayerEnum.single,
-            data: PrayerData.ourFather)
+            PrayerData.ourFatherPrayer
         ]
         
         for _ in 0..<3 {
             prayerSequence += [
-                PrayerData.constructPrayer(PrayerData.hailMary, name: "Hail Mary"),
+                PrayerData.hailMaryPrayer,
             ]
         }
         
         prayerSequence += [
-            PrayerData.constructPrayer(PrayerData.gloryBe, name: "Glory Be")
+            PrayerData.gloryBePrayer
         ];
         
         //  Praying Each Decade:
@@ -45,25 +42,22 @@ class RosaryUtils {
                 Prayer( name: mystery[index], type: PrayerEnum.single, data: mystery[index]),
             ]
             prayerSequence += [
-                Prayer(
-                    name: "Our Father",
-                    type: PrayerEnum.single,
-                    data: PrayerData.ourFather)
+                PrayerData.ourFatherPrayer
             ]
             
             for _ in 0..<10 {
                 prayerSequence += [
-                    PrayerData.constructPrayer(PrayerData.hailMary, name: "Hail Mary"),
+                    PrayerData.hailMaryPrayer,
                 ]
             }
             prayerSequence += [
-                PrayerData.constructPrayer(PrayerData.gloryBe, name: "Glory Be"),
+                PrayerData.gloryBePrayer
             ]
         }
                 
         // End of the Rosary:
         prayerSequence += [
-            PrayerData.constructPrayer(PrayerData.gloryBe, name: "Glory Be"),
+            PrayerData.gloryBePrayer,
             PrayerData.constructPrayer(PrayerData.fatima, name: "Fatima")
         ];
         

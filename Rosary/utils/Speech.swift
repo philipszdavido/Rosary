@@ -100,6 +100,7 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
     func stopPrayer() {
 
         if synthesizer.isSpeaking {
+            isSpeaking = false
             synthesizer.stopSpeaking(at: .immediate)
         }
 
@@ -153,15 +154,27 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
         }
     }
     
-    func setBeadOptions(wordIndex: Int, prayerIndex: Int) {
-        
+    func setBeadOptions(wordIndex: Int, prayerIndex: Int) {}
+    
+    func pause() {
+        if synthesizer.isSpeaking {
+            isSpeaking = false
+            synthesizer.pauseSpeaking(at: .word) // or .immediate
+        }
+    }
+    
+    func resume() {
+        if synthesizer.isPaused {
+            synthesizer.continueSpeaking()
+            isSpeaking = true
+        }
     }
         
 }
 
 class RosarySpeaker: PrayerSpeaker {
     
-    @Published var bead = 0;
+    @Published var bead = -1;
     
     override init() {
         super.init()
@@ -172,19 +185,13 @@ class RosarySpeaker: PrayerSpeaker {
     }
     
     override func setBeadOptions(wordIndex: Int, prayerIndex: Int) {
-        
-        //print(currentWordIndex, currentPrayerIndex)
-        
+                
         let currentPrayer: String = prayerQueue[prayerIndex].name
         
-        if currentPrayer == "Our Father" {
+        if currentPrayer == "Our Father" || currentPrayer == "Glory Be" || currentPrayer == "Hail Mary" {
             bead += 1
         }
-        
-        if currentPrayer == "Hail Mary" {
-            bead += 1
-        }
-        
+                
     }
     
 }

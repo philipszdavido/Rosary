@@ -11,12 +11,12 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
+    @State private var selectedTab: Int = 1
 
     var body: some View {
-        TabView(selection: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Selection@*/.constant(1)/*@END_MENU_TOKEN@*/) {
-            NavigationStack {
-                PrayersViewV2()
-            }
+        TabView(selection: $selectedTab) {
+            
+            PrayersViewV2()
             .tabItem {
                 Image(systemName: "book.pages")
                 Text("Prayers")
