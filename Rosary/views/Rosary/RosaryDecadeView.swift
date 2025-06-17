@@ -7,26 +7,6 @@
 
 import SwiftUI
 
-struct RosaryDecadeView: View {
-    var decadeNumber: Int
-    var currentBead: Int // Keeps track of the current bead
-    var body: some View {
-        HStack {
-            ForEach(0..<10, id: \.self) { index in
-                BeadView(isCompleted: index < currentBead, isActive: index == currentBead)
-                    .onTapGesture {
-                        // Action when a bead is tapped (optional, e.g., mark as prayed)
-                    }
-                if index == 4 { // Our Father bead in the middle
-                    //Spacer()
-                        //.frame(width: 20)
-                }
-            }
-        }
-    }
-}
-
-
 struct RosaryDecadeViewV2: View {
     
     private let beads = 59;

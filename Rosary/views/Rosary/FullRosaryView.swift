@@ -19,11 +19,11 @@ struct FullRosaryView: View {
                 .padding()
 
             VStack {
-                RosaryDecadeView(decadeNumber: 1, currentBead: currentBead)
-                RosaryDecadeView(decadeNumber: 2, currentBead: currentBead)
-                RosaryDecadeView(decadeNumber: 3, currentBead: currentBead)
-                RosaryDecadeView(decadeNumber: 4, currentBead: currentBead)
-                RosaryDecadeView(decadeNumber: 5, currentBead: currentBead)
+//                RosaryDecadeView(decadeNumber: 1, currentBead: currentBead)
+//                RosaryDecadeView(decadeNumber: 2, currentBead: currentBead)
+//                RosaryDecadeView(decadeNumber: 3, currentBead: currentBead)
+//                RosaryDecadeView(decadeNumber: 4, currentBead: currentBead)
+//                RosaryDecadeView(decadeNumber: 5, currentBead: currentBead)
             }
             
             HStack {

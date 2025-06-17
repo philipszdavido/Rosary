@@ -143,9 +143,13 @@ struct RosaryView: View {
     }
     
     func onBeadTap(index: Int) {
-        speaker.stopPrayer();
+        
+        print(index)
+        if rosaryType == .auto || rosaryType == .none { return }
+
         speaker.currentPrayerIndex = index
         speaker.speakNextPrayer()
+        
     }
     
 }

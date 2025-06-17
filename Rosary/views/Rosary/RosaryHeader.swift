@@ -16,7 +16,7 @@ struct RosaryHeader: View {
     public var speaker: RosarySpeaker;
 
     var title: String {
-        return "\(prayer.name)(\(RosaryMystery.today())) \(rosaryTypeTitle)"
+        return "\(prayer.name) - \(RosaryMystery.today())"
     }
     
     var rosaryTypeTitle: String {
@@ -35,16 +35,17 @@ struct RosaryHeader: View {
             
             Button(action: { dismiss() }) {
                 Image(systemName: "chevron.left")
-            }.padding(.leading)
+            }
             
             Spacer()
 
             Text("\(speaker.bead < 0 ? 0 : speaker.bead)")
                 .padding(.horizontal, 10)
-                .padding(.vertical, 5)
+                .padding(.vertical, 3)
                 .foregroundStyle(.white)
                 .background(Color.blue)
-                .cornerRadius(20.0)
+                .cornerRadius(10.0)
+                .font(.caption)
 
             Text(title)
                 .font(

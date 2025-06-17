@@ -12,7 +12,8 @@ struct BeadView: View {
     let isActive: Bool
     
     @State private var isTapped = false
-    
+    var onTap: () -> Void;
+
     var body: some View {
         Circle()
             .fill(isCompleted ? Color.green : (isActive ? Color.blue : Color.gray))
@@ -25,6 +26,7 @@ struct BeadView: View {
             .animation(.spring(response: 0.3, dampingFraction: 0.4), value: isTapped)
             .onTapGesture {
                 isTapped = true
+                onTap()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     isTapped = false
                 }
@@ -37,6 +39,7 @@ struct OurFatherBeadView: View {
     var isActive: Bool
 
     @State private var isTapped = false
+    var onTap: () -> Void;
 
     var body: some View {
         Circle()
@@ -50,6 +53,7 @@ struct OurFatherBeadView: View {
             .animation(.spring(response: 0.3, dampingFraction: 0.4), value: isTapped)
             .onTapGesture {
                 isTapped = true
+                onTap()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     isTapped = false
                 }
@@ -58,11 +62,11 @@ struct OurFatherBeadView: View {
 }
 
 #Preview {
-    BeadView(isCompleted: false, isActive: true)
-    BeadView(isCompleted: false, isActive: false)
-    BeadView(isCompleted: true, isActive: true)
-    OurFatherBeadView(isCompleted: false, isActive: true)
-    OurFatherBeadView(isCompleted: true, isActive: true)
+    BeadView(isCompleted: false, isActive: true, onTap: {})
+    BeadView(isCompleted: false, isActive: false, onTap: {})
+    BeadView(isCompleted: true, isActive: true, onTap: {})
+    OurFatherBeadView(isCompleted: false, isActive: true, onTap: {})
+    OurFatherBeadView(isCompleted: true, isActive: true, onTap: {})
 }
 
 

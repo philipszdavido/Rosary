@@ -27,26 +27,28 @@ struct RosarySimpleDecadeView: View {
     }
     
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 8) {
+        LazyVGrid(columns: columns, spacing: 2) {
             ForEach(0..<59, id: \.self) { index in
                 
                 if isOurFather(index: index) {
                     
                     OurFatherBeadView(
                         isCompleted: index == currentBeadIndex,
-                        isActive: index < currentBeadIndex
-                    ).onTapGesture {
-                        onBeadTap(index)
-                    }
+                        isActive: index < currentBeadIndex,
+                        onTap: {
+                            onBeadTap(index)
+                        }
+                    )
                     
                 } else {
                     
                     BeadView(
                         isCompleted: index == currentBeadIndex,
-                        isActive: index < currentBeadIndex
-                    ).onTapGesture {
-                        onBeadTap(index)
-                    }
+                        isActive: index < currentBeadIndex,
+                        onTap: {
+                            onBeadTap(index)
+                        }
+                    )
                     
                 }
             }
@@ -55,8 +57,23 @@ struct RosarySimpleDecadeView: View {
     }
 }
 
+
+struct RosarySimpleDecadeView_Preview: View {
+    
+    func onBeadTap(index: Int) {
+        print(index)
+    }
+    
+    var body: some View {
+        RosarySimpleDecadeView(
+            currentBeadIndex: 9,
+            onBeadTap: onBeadTap
+        )
+    }
+}
+
 #Preview {
-    //RosarySimpleDecadeView(currentBeadIndex: 2, onBeadTap: () -> Void)
+    RosarySimpleDecadeView_Preview()
 }
 
 

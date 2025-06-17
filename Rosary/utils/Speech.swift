@@ -20,6 +20,12 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
     
     @Published public var prayerQueue: [Prayer] = [] // <- New: queue of prayers
     @Published var currentPrayerIndex: Int = 0 // <- New: track which one we're speaking
+    {
+        didSet {
+            print(currentPrayerIndex)
+            currentPrayer = prayerQueue[currentPrayerIndex]
+        }
+    }
     @Published var currentPrayer: Prayer? = nil
     var speakNextPrayerOnCompletion: Bool = true
     
