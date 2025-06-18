@@ -10,9 +10,20 @@ import SwiftUI
 struct SettingsView: View {
     
     @EnvironmentObject var settings: GlobalSettings
-    
+    @State private var showBeadCounting = true
+        
     var body: some View {
         
+        let showBeadCountingBinding = Binding<Bool>(
+            get: { settings.showBeadCounting },
+            set: {
+                if $0 {
+                    settings.showBeadCounting = true
+                } else {
+                    settings.showBeadCounting = false
+                }
+            })
+
         NavigationView {
             List {
                 Section("Colors")  {
@@ -35,6 +46,28 @@ struct SettingsView: View {
                     
                 }
                 
+                Section("Rosary") {
+                    
+                    // show bead counting
+                    Toggle(
+                        "Show Bead Counting",
+                        isOn: showBeadCountingBinding
+                    )
+                    
+                    // speak prayer aloud
+                    NavigationLink("Speech") {
+                        SpeechSettingsView()
+                    }
+                    
+                    // bead not-prayed color
+                    // bead prayed color
+                    // bead currently praying color
+                    NavigationLink("Bead Color") {
+                        BeadColorSettingsView()
+                    }
+                    
+                }
+                
                 Section {
                     NavigationLink(
                         destination: AboutView()
@@ -44,52 +77,6 @@ struct SettingsView: View {
 
                 }
             }.navigationTitle(Text("Settings"))
-        }
-    }
-}
-
-struct HighlightColorSettingsView: View {
-    
-    @EnvironmentObject var settings: GlobalSettings
-
-    var body: some View {
-        VStack {
-            ColorPicker("Highlight Color", selection: $settings.highlightColor)
-            Spacer()
-        }.padding()
-    }
-}
-
-struct ThemeSettingsView: View {
-
-    @EnvironmentObject var settings: GlobalSettings
-    
-    var body: some View {
-        
-        VStack {
-            Toggle("Dark", isOn: Binding<Bool>(
-                get: { settings.theme == .dark},
-                set: {_ in settings.theme = .dark}
-            ))
-            
-            Divider()
-            Toggle("Light", isOn: Binding<Bool>(
-                get: { settings.theme == .light},
-                set: {_ in settings.theme = .light}
-            ))
-        }
-        .padding()
-        Spacer()
-
-    }
-}
-
-struct AboutView: View {
-    var body: some View {
-        
-        VStack {
-            Text("Chidume Nnamdi")
-            Text("kurtwanger40@gmail.com")
         }
     }
 }

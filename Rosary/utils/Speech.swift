@@ -28,6 +28,7 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
     }
     @Published var currentPrayer: Prayer? = nil
     var speakNextPrayerOnCompletion: Bool = true
+    @Published public var voice: String = "com.apple.ttsbundle.Samantha-compact"
     
     override init() {
         super.init()
@@ -95,7 +96,9 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
         currentWordIndex = -1
 
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        //utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        print(voice)
+        utterance.voice = AVSpeechSynthesisVoice(identifier: voice)
         utterance.rate = 0.45
         
         isSpeaking = true
@@ -122,12 +125,12 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
         DispatchQueue.main.async {
             self.lastMatchedWordIndex += 1 // update last matched
             self.currentWordIndex += 1
-            print(
-                "speechSynthesizer",
-                self.currentWordIndex,
-                self.lastMatchedWordIndex,
-                spokenSubstring
-            )
+//            print(
+//                "speechSynthesizer",
+//                self.currentWordIndex,
+//                self.lastMatchedWordIndex,
+//                spokenSubstring
+//            )
         }
 
 //        if let index = words[searchRange].firstIndex(where: {
@@ -174,6 +177,12 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
             synthesizer.continueSpeaking()
             isSpeaking = true
         }
+    }
+    
+    func setVoice(voiceToSet: String) {
+        // let utterance = AVSpeechUtterance(string: "Hello world")
+        // utterance.voice = AVSpeechSynthesisVoice(identifier: "com.apple.ttsbundle.Samantha-compact")
+        voice = voiceToSet
     }
         
 }

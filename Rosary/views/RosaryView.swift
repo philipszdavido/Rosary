@@ -20,6 +20,7 @@ struct RosaryView: View {
     @State var rosaryType = RosaryType.none
     
     var prayerSequence: [Prayer] = []
+    @EnvironmentObject var settings: GlobalSettings
     
     var body: some View {
         
@@ -131,6 +132,7 @@ struct RosaryView: View {
         }
         .onAppear {
             speaker.setPrayerQueue(prayerSequence)
+            speaker.voice = settings.voice
         }
         
     }
@@ -157,7 +159,7 @@ struct RosaryView: View {
 #Preview {
     RosaryView(
         prayer: .constant(Prayer(name: "Rosary", type: .rosary, data: ""))
-    )
+    ).environmentObject(GlobalSettings())
 }
 
 

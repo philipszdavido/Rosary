@@ -12,6 +12,7 @@ struct SinglePrayerView: View {
     @StateObject private var speaker = PrayerSpeaker()
     @Binding var prayer: Prayer
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var settings: GlobalSettings
     
     var body: some View {
         
@@ -86,6 +87,8 @@ struct SinglePrayerView: View {
             }
             .padding()
 
+        }.onAppear{
+            speaker.voice = settings.voice
         }
         
     }
@@ -102,7 +105,7 @@ struct SinglePrayerView: View {
                             data: PrayerData.hailMary
                         )
                     )
-        )
+        ).environmentObject(GlobalSettings())
     }
 }
 

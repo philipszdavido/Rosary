@@ -10,12 +10,41 @@ import SwiftUICore
 import UIKit
 
 enum Theme: Int {
-    //    case dark = 0
-    //    case light = 1
     case light = 0
-        case dark = 1
-        case system = 2
+    case dark = 1
+    case system = 2
 }
+
+enum BeadColorType: String, CaseIterable, Identifiable {
+    case notPrayed
+    case prayed
+    case currentlyPraying
+    case hailMary
+    case ourFather
+
+    var id: String { rawValue }
+
+    var defaultColor: Color {
+        switch self {
+        case .notPrayed: return .gray
+        case .prayed: return .green
+        case .currentlyPraying: return .blue
+        case .hailMary: return .purple
+        case .ourFather: return .orange
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .notPrayed: return "Not Prayed"
+        case .prayed: return "Prayed"
+        case .currentlyPraying: return "Currently Praying"
+        case .hailMary: return "Hail Mary"
+        case .ourFather: return "Our Father"
+        }
+    }
+}
+
 
 extension UserDefaults {
     
@@ -47,6 +76,20 @@ extension UserDefaults {
         return Theme(rawValue: rawValue)!
     }
     
+    func setBeadColorType(_ color: Color, for key: String) {
+        let uiColor = UIColor(color)
+        if let data = try? NSKeyedArchiver.archivedData(withRootObject: uiColor, requiringSecureCoding: false) {
+            set(data, forKey: key)
+        }
+    }
+    
+    func getBeadColorType(for key: String, default defaultColor: Color) -> Color {
+        if let data = data(forKey: key),
+           let uiColor = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? UIColor {
+            return Color(uiColor)
+        }
+        return defaultColor
+    }
 }
 
 
@@ -59,10 +102,10 @@ class GlobalSettings: ObservableObject {
         didSet {
             // update localstorage
             userDefaults.setTheme(theme: theme)
-
+            
         }
     }
-
+    
     @Published var highlightColor: Color
     {
         didSet {
@@ -72,17 +115,46 @@ class GlobalSettings: ObservableObject {
         }
     }
     
-    init(
-        theme: Theme,
-        highlightColor: Color
-    ) {
-        self.theme = theme
-        self.highlightColor = highlightColor
+    @Published var showBeadCounting: Bool = false
+    {
+        didSet {
+            userDefaults.set(showBeadCounting, forKey: "showBeadCounting")
+        }
+    }
+    
+    @Published var beadColors: [BeadColorType: Color] = [:] {
+        didSet {
+            for (type, color) in beadColors {
+                userDefaults.setBeadColorType(color, for: type.rawValue)
+            }
+        }
+    }
+    @Published var voice: String {
+        didSet {
+            userDefaults.set(voice, forKey: "voice")
+        }
+    }
+    
+    func color(for type: BeadColorType) -> Color {
+        beadColors[type] ?? type.defaultColor
+    }
+    
+    func setColor(_ color: Color, for type: BeadColorType) {
+        beadColors[type] = color
     }
     
     init () {
+        
         self.theme = userDefaults.getTheme()
         self.highlightColor = userDefaults.getColor() ?? .orange
+        
+        var loaded: [BeadColorType: Color] = [:]
+        for type in BeadColorType.allCases {
+            loaded[type] = userDefaults.getBeadColorType(for: type.rawValue, default: type.defaultColor)
+        }
+        beadColors = loaded
+        
+        self.voice = userDefaults.string(forKey: "voice") ?? "com.apple.ttsbundle.Samantha-compact"
     }
     
 }
