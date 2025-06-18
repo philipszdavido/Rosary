@@ -38,6 +38,30 @@ enum RosaryMystery: String {
         }
     }
     
+    static func mysteryTitle(index: Int) -> String {
+        
+        var title: String = ""
+        // The five sorrowful mysteries: First
+        
+        switch index {
+        case 0:
+            title = "The First"
+            case 1:
+            title = "The Second"
+        case 2:
+            title = "The Third"
+        case 3:
+            title = "The Fourth"
+        case 4:
+            title = "The Fifth"
+        default:
+            title = ""
+        }
+        
+        return "The Five" + RosaryMystery.today().rawValue + " Mysteries." + title
+        
+    }
+    
 }
 
 

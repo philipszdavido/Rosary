@@ -38,9 +38,16 @@ class RosaryUtils {
         let mystery = RosaryMystery.mystery()
         
         for index in 0..<decade {
+            
             prayerSequence += [
+                Prayer(
+                    name: "",
+                    type: PrayerEnum.single,
+                    data: RosaryMystery.mysteryTitle(index: index)
+                ),
                 Prayer( name: mystery[index], type: PrayerEnum.single, data: mystery[index]),
             ]
+            
             prayerSequence += [
                 PrayerData.ourFatherPrayer
             ]
