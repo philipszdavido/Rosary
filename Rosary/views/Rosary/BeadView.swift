@@ -14,10 +14,28 @@ struct BeadView: View {
     @State private var isTapped = false
     var onTap: () -> Void;
     @EnvironmentObject var settings: GlobalSettings
+    
+    var fillColor: Color {
+        
+        // isCompleted ? Color.green : (isActive ? Color.blue : Color.gray)
+
+        let beadColors = settings.beadColors
+        
+        if isCompleted {
+            return beadColors[.prayed] ?? .green
+        } else {
+            if isActive {
+                return beadColors[.currentlyPraying] ?? .blue
+            }
+            
+            return beadColors[.hailMary] ?? .gray
+        }
+
+    }
 
     var body: some View {
         Circle()
-            .fill(isCompleted ? Color.green : (isActive ? Color.blue : Color.gray))
+            .fill(fillColor)
             .frame(width: 30, height: 40)
             .overlay(
                 Circle().stroke(Color.white, lineWidth: 2)
@@ -43,9 +61,27 @@ struct OurFatherBeadView: View {
     var onTap: () -> Void;
     @EnvironmentObject var settings: GlobalSettings
 
+    var fillColor: Color {
+        
+        // isCompleted ? Color.green : (isActive ? Color.blue : Color.gray)
+
+        let beadColors = settings.beadColors
+        
+        if isCompleted {
+            return beadColors[.prayed] ?? .green
+        } else {
+            if isActive {
+                return beadColors[.currentlyPraying] ?? .blue
+            }
+            
+            return beadColors[.ourFather] ?? .gray
+        }
+
+    }
+
     var body: some View {
         Circle()
-            .fill(isCompleted ? Color.green : (isActive ? Color.blue : Color.gray))
+            .fill(fillColor)
             .frame(width: 40, height: 50)
             .overlay(
                 Circle().stroke(Color.white, lineWidth: 2)

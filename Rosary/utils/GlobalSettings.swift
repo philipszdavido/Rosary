@@ -115,7 +115,7 @@ class GlobalSettings: ObservableObject {
         }
     }
     
-    @Published var showBeadCounting: Bool = false
+    @Published var showBeadCounting: Bool = true
     {
         didSet {
             userDefaults.set(showBeadCounting, forKey: "showBeadCounting")
@@ -135,7 +135,7 @@ class GlobalSettings: ObservableObject {
         }
     }
     
-    @Published var speakAloud: Bool {
+    @Published var speakAloud: Bool = true {
         didSet {
             userDefaults.set(speakAloud, forKey: "speakAloud")
         }
