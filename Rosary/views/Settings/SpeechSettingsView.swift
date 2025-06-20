@@ -11,7 +11,6 @@ import AVFoundation
 struct SpeechSettingsView: View {
     
     @EnvironmentObject var settings: GlobalSettings
-    @State private var speakPrayerAloud: Bool = true
     
     var body: some View {
         
@@ -19,8 +18,8 @@ struct SpeechSettingsView: View {
             Section {
                 VStack {
                     Toggle("Speak Prayer", isOn: Binding<Bool>(
-                        get: { speakPrayerAloud },
-                        set: { _ in speakPrayerAloud.toggle() }
+                        get: { settings.speakAloud },
+                        set: { _ in settings.speakAloud.toggle() }
                     ))
                     
                     NavigationLink(

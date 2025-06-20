@@ -30,11 +30,15 @@ struct RosaryView: View {
             speaker: speaker
         )
         
-        RosarySimpleDecadeView(
-            currentBeadIndex: $speaker.bead,
-            prayerSequence: prayerSequence,
-            onBeadTap: onBeadTap
-        )
+        if settings.showBeadCounting {
+            
+            RosarySimpleDecadeView(
+                currentBeadIndex: $speaker.bead,
+                prayerSequence: prayerSequence,
+                onBeadTap: onBeadTap
+            )
+            
+        }
 
         VStack(alignment: .leading) {
             
@@ -135,6 +139,7 @@ struct RosaryView: View {
         }
         .onAppear {
             speaker.voice = settings.voice
+            speaker.speakAloud = settings.speakAloud
         }
         
     }

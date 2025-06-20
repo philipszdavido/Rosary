@@ -135,6 +135,12 @@ class GlobalSettings: ObservableObject {
         }
     }
     
+    @Published var speakAloud: Bool {
+        didSet {
+            userDefaults.set(speakAloud, forKey: "speakAloud")
+        }
+    }
+    
     func color(for type: BeadColorType) -> Color {
         beadColors[type] ?? type.defaultColor
     }
@@ -155,6 +161,7 @@ class GlobalSettings: ObservableObject {
         beadColors = loaded
         
         self.voice = userDefaults.string(forKey: "voice") ?? "com.apple.ttsbundle.Samantha-compact"
+        self.speakAloud = userDefaults.bool(forKey: "speakAloud") ?? true
     }
     
 }
