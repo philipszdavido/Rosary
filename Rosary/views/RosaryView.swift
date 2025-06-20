@@ -27,13 +27,14 @@ struct RosaryView: View {
         RosaryHeader(
             prayer: prayer,
             rosaryType: rosaryType,
-            pauseAction: {
-                speaker.pause()
-            },
             speaker: speaker
         )
         
-        RosarySimpleDecadeView(currentBeadIndex: speaker.bead, onBeadTap: onBeadTap)
+        RosarySimpleDecadeView(
+            currentBeadIndex: $speaker.bead,
+            prayerSequence: prayerSequence,
+            onBeadTap: onBeadTap
+        )
 
         VStack(alignment: .leading) {
             
@@ -51,11 +52,11 @@ struct RosaryView: View {
             
             if speaker.isSpeaking {
                 
-                CurrentTextDisplayView(
-                    words: speaker.words,
-                    highlightIndex: speaker.currentWordIndex
+                CurrentTextDisplayViewV2(
+                    currentText: speaker.prayerQueue.isEmpty ? "" : speaker.prayerQueue[speaker.currentPrayerIndex].data,
+                    range: speaker.currentWordRange
                 )
-                
+                                
             } else {
                 Text(prayerSequence[speaker.currentPrayerIndex].data)
                     .font(
@@ -110,7 +111,9 @@ struct RosaryView: View {
                         AutoBottomBar(
                             speaker: speaker,
                             rosaryType: $rosaryType,
-                            prayerSequence: prayerSequence
+                            prayerSequence: prayerSequence,
+                            isSpeaking: $speaker.isSpeaking,
+                            isPaused: $speaker.isPaused
                         )
                         
                     }
@@ -131,7 +134,6 @@ struct RosaryView: View {
             
         }
         .onAppear {
-            speaker.setPrayerQueue(prayerSequence)
             speaker.voice = settings.voice
         }
         
@@ -144,13 +146,15 @@ struct RosaryView: View {
         
     }
     
-    func onBeadTap(index: Int) {
+    func onBeadTap(index: Int, beadIndex: Int) {
         
-        print(index)
+        print(index, beadIndex, prayerSequence[index], speaker.prayerQueue[index])
+        
         if rosaryType == .auto || rosaryType == .none { return }
 
         speaker.currentPrayerIndex = index
-        speaker.speakNextPrayer()
+        speaker.bead = beadIndex;
+        speaker.speakCurrent()
         
     }
     
@@ -168,46 +172,49 @@ struct AutoBottomBar: View {
     public var speaker: RosarySpeaker
     @Binding var rosaryType: RosaryType
     public var prayerSequence: [Prayer]
+    @Binding var isSpeaking: Bool
+    @Binding var isPaused: Bool
     
     var body: some View {
-        
-        Button(action: {
-            autoPrayer()
-        }) {
-            Label("Start", systemImage: "speaker.wave.2.fill")
-        }
-        .padding()
-        
-        if speaker.isSpeaking {
-            
-            Button(action: {
-                pausePrayer()
-            }) {
-                Label("Pause", systemImage: "pause.fill")
-            }
-            .padding()
-            
-            Button(action: {
-                speaker.stopPrayer()
-            }) {
-                Label("Stop", systemImage: "stop.fill")
-            }
-
-        }
-        
-        if !speaker.isSpeaking {
-            Button(action: {
-                resumePrayer()
-            }) {
-                Label("Resume", systemImage: "reload.circle.fill")
-            }
-            .padding()
-        }
+        HStack {
+            if !isSpeaking && !isPaused {
                 
-        Button(action: {
-            rosaryType = .none
-        }) {
-            Label("Cancel", systemImage: "cancel.circle.fill")
+                Button(action: {
+                    autoPrayer()
+                }) {
+                    Label("Start", systemImage: "speaker.wave.2.fill")
+                }
+                .padding()
+            }
+            
+            if isPaused {
+                
+                Button(action: {
+                    resumePrayer()
+                }) {
+                    Label("Resume", systemImage: "reload.circle.fill")
+                }
+                .padding()
+                
+            }
+            
+            
+            if isSpeaking {
+                
+                Button(action: {
+                    pausePrayer()
+                }) {
+                    Label("Pause", systemImage: "pause.fill")
+                }
+                .padding()
+                
+            }
+            
+            Button(action: {
+                cancel()
+            }) {
+                Label("Cancel", systemImage: "cancel.circle.fill")
+            }
         }
 
     }
@@ -216,7 +223,7 @@ struct AutoBottomBar: View {
         
         DispatchQueue.main.async {
 
-            speaker.speakPrayers(prayerSequence)
+            speaker.speak(prayers: prayerSequence, auto: true)
 
         }
         
@@ -229,8 +236,23 @@ struct AutoBottomBar: View {
     
     func resumePrayer() {
         speaker.resume()
+        
     }
-
+    
+    func cancel() {
+        rosaryType = .none
+        speaker.bead = 0
+        speaker.currentPrayerIndex = 0
+        speaker.isAuto = false
+        speaker.stop()
+    }
+    
+    func stop() {
+        speaker.bead = 0
+        speaker.currentPrayerIndex = 0
+        speaker.isAuto = false
+        speaker.stop()
+    }
 
 }
 
@@ -240,6 +262,14 @@ struct ManualBottomBar: View {
     public var speaker: RosarySpeaker
     @Binding var rosaryType: RosaryType
     public var prayerSequence: [Prayer]
+    
+    @State private var next = true
+    
+    func isDidFinished() {
+        if next {
+            speaker.currentPrayerIndex += 1
+        }
+    }
 
     var body: some View {
         HStack {
@@ -258,8 +288,7 @@ struct ManualBottomBar: View {
             }
             
             Button(action: {
-                speaker.stopPrayer();
-                rosaryType = .none
+                cancel()
             }) {
                 Label("Cancel", systemImage: "cancel.circle.fill")
             }
@@ -268,14 +297,35 @@ struct ManualBottomBar: View {
     }
     
     func nextPrayer() {
-
-        speaker.speakNextPrayer()
+        
+        next = true
+        
+        if speaker.currentPrayerIndex == 0 {
+            speaker.isDidFinished = isDidFinished
+            speaker.speak(prayers: prayerSequence, auto: false)
+        } else {
+            speaker.speakNext()
+        }
         
     }
     
     func prevPrayer() {
 
-        speaker.speakPreviousPrayer()
+        
+        if speaker.currentPrayerIndex > 0 {
+            
+            next = false
+
+            speaker.speakPrevious()
+        }
+
+    }
+
+    func cancel() {
+        speaker.stop()
+        rosaryType = .none
+        speaker.bead = 0
+        speaker.currentPrayerIndex = 0
 
     }
 

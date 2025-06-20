@@ -58,7 +58,7 @@ enum RosaryMystery: String {
             title = ""
         }
         
-        return "The Five" + RosaryMystery.today().rawValue + " Mysteries." + title
+        return "The Five " + RosaryMystery.today().rawValue + ". " + title
         
     }
     

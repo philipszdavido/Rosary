@@ -9,10 +9,14 @@ import Foundation
 
 class RosaryUtils {
     
+    static func constructPrayer(_ data: String, name: String, type: PrayerEnum) -> Prayer {
+        return Prayer(name: name, type: type, data: data)
+    }
+
     public func constructRosary(decade: Int = 5) -> [Prayer] {
-
+                
         var prayerSequence: [Prayer] = []
-
+        
         // Starting the Rosary:
         prayerSequence += [
             
@@ -20,17 +24,17 @@ class RosaryUtils {
             
             PrayerData.constructPrayer(PrayerData.apostlesCreed, name: "Apostles Creed"),
             
-            PrayerData.ourFatherPrayer
+            PrayerData.ourFatherPrayer(PrayerEnum.bead)
         ]
         
         for _ in 0..<3 {
             prayerSequence += [
-                PrayerData.hailMaryPrayer,
+                PrayerData.hailMaryPrayer(.bead),
             ]
         }
         
         prayerSequence += [
-            PrayerData.gloryBePrayer
+            PrayerData.gloryBePrayer()
         ];
         
         //  Praying Each Decade:
@@ -41,7 +45,7 @@ class RosaryUtils {
             
             prayerSequence += [
                 Prayer(
-                    name: "",
+                    name: RosaryMystery.mysteryTitle(index: index),
                     type: PrayerEnum.single,
                     data: RosaryMystery.mysteryTitle(index: index)
                 ),
@@ -49,22 +53,22 @@ class RosaryUtils {
             ]
             
             prayerSequence += [
-                PrayerData.ourFatherPrayer
+                PrayerData.ourFatherPrayer(.bead)
             ]
             
             for _ in 0..<10 {
                 prayerSequence += [
-                    PrayerData.hailMaryPrayer,
+                    PrayerData.hailMaryPrayer(.bead),
                 ]
             }
             prayerSequence += [
-                PrayerData.gloryBePrayer
+                PrayerData.gloryBePrayer()
             ]
         }
                 
         // End of the Rosary:
         prayerSequence += [
-            PrayerData.gloryBePrayer,
+            PrayerData.gloryBePrayer(),
             PrayerData.constructPrayer(PrayerData.fatima, name: "Fatima")
         ];
         

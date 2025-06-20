@@ -40,10 +40,12 @@ struct SinglePrayerView: View {
             ScrollView {
                 
                 if (speaker.isSpeaking) {
+
                     TextDisplayView(
-                        words: speaker.words,
-                        highlightIndex: speaker.currentWordIndex
+                        word: prayer.data,
+                        range: speaker.currentWordRange
                     )
+                    
                 } else {
                     
                     Text(prayer.data)
@@ -74,14 +76,14 @@ struct SinglePrayerView: View {
         
         HStack {
             Button(action: {
-                speaker.speakPrayer(prayer.data)
+                speaker.speak(prayers: [prayer], auto: false)
             }) {
                 Label("Speak Prayer", systemImage: "speaker.wave.2.fill")
             }
             .padding()
             
             Button(action: {
-                speaker.stopPrayer()
+                speaker.stop()
             }) {
                 Label("Stop Prayer", systemImage: "stop.fill")
             }
@@ -110,21 +112,33 @@ struct SinglePrayerView: View {
 }
 
 struct TextDisplayView: View {
-    let words: [String]
-    let highlightIndex: Int
-    let settings = GlobalSettings()
+
+    let word: String
+    let range: NSRange?
+    
+    @EnvironmentObject var settings: GlobalSettings
+    
+    func setAttribute(word: String, range: NSRange?) -> AttributedString {
+
+        if let range = range {
+            
+            let mutableAttr = NSMutableAttributedString(string: word)
+            
+            mutableAttr
+                .setAttributes(
+                    [NSAttributedString.Key.foregroundColor : UIColor(settings.highlightColor)],
+                    range: range
+                )
+            
+            return AttributedString(mutableAttr)
+        }
+        
+        return AttributedString(word)
+    }
     
     var body: some View {
-        // Combine Text views for each word
-        words.enumerated().reduce(Text(""), { (result, pair) in
-            let (index, word) = pair
-            let styledWord: Text = index == highlightIndex
-            ? Text(word + " ")
-                .foregroundColor(settings.highlightColor)
-                .bold()
-                : Text(word + " ")
-            return result + styledWord
-        })
+
+        Text(setAttribute(word: word, range: range))
         .font(
             Font?.init(
                 .system(
@@ -141,37 +155,4 @@ struct TextDisplayView: View {
         .padding(.top, 20.0)
 
     }
-}
-
-struct ItemsView: View {
-
-    let items: [String]
-    let highlightIndex: Int
-    let settings = GlobalSettings()
-
-    var body: some View {
-        highlightWord
-                .padding()
-    }
-    
-    var highlightWord: Text {
-        var result = Text("")
-
-        for (index, item) in items.enumerated() {
-            let styledItem: Text
-
-            if index == highlightIndex {
-                styledItem = Text(item)
-                    .foregroundColor(settings.highlightColor)
-            } else {
-                styledItem = Text(item)
-            }
-            
-            result = result + Text(" ") + styledItem
-        }
-        
-        return result
-        
-    }
-    
 }

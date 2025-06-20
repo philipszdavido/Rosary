@@ -23,4 +23,5 @@ struct Prayer : Identifiable, Hashable {
 enum PrayerEnum: Int {
     case single = 0
     case rosary = 1
+    case bead = 3
 }

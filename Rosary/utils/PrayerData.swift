@@ -48,23 +48,28 @@ class PrayerData {
                 .actOfContrition)
     ]
     
-    static func constructPrayer(_ data: String, name: String) -> Prayer {
-        return Prayer(name: name, type: PrayerEnum.single, data: data)
+    static func constructPrayer(_ data: String, name: String, type: PrayerEnum = .single) -> Prayer {
+        return Prayer(name: name, type: type, data: data)
     }
     
-    static var ourFatherPrayer: Prayer {
-        return PrayerData.constructPrayer(ourFather, name: "Our Father")
+    static func ourFatherPrayer(_ type: PrayerEnum = .single) -> Prayer {
+        return PrayerData
+            .constructPrayer(ourFather, name: "Our Father", type: type)
     }
     
-    static var hailMaryPrayer: Prayer {
-        return PrayerData.constructPrayer(hailMary, name: "Hail Mary")
+    static func hailMaryPrayer(_ type: PrayerEnum = .single) -> Prayer {
+        return PrayerData.constructPrayer(hailMary, name: "Hail Mary", type: type)
     }
     
-    static var gloryBePrayer: Prayer {
-        return PrayerData.constructPrayer(gloryBe, name: "Glory Be")
+    static func gloryBePrayer(_ type: PrayerEnum = .single) -> Prayer {
+        return PrayerData.constructPrayer(gloryBe, name: "Glory Be", type: type)
     }
-    
+
     static let ourFather = """
+    Our Father,
+    """
+
+    static let _ourFather = """
     Our Father,
     Who art in heaven,
     hallowed be Thy name.
@@ -76,8 +81,12 @@ class PrayerData {
     and lead us not into temptation,
     but deliver us from evil. Amen.
     """
-    
+
     static let hailMary = """
+    Hail Mary
+    """
+    
+    static let _hailMary = """
     Hail Mary, full of grace, the Lord is with thee.
     Blessed art thou amongst women,
     and blessed is the fruit of thy womb, Jesus.
@@ -85,8 +94,12 @@ class PrayerData {
     pray for us sinners,
     now and at the hour of our death. Amen.
     """
-    
+
     static let gloryBe = """
+    Glory
+    """
+    
+    static let _gloryBe = """
     Glory be to the Father,
     and to the Son,
     and to the Holy Spirit,
@@ -94,8 +107,12 @@ class PrayerData {
     is now, and ever shall be,
     world without end. Amen.
     """
-    
+
     static let apostlesCreed = """
+    I believe
+    """
+
+    static let _apostlesCreed = """
     I believe in God,
     the Father Almighty,
     Creator of Heaven and earth;
@@ -240,8 +257,12 @@ class PrayerData {
     May the souls of the faithful departed,
     through the mercy of God, rest in peace. Amen.
     """
-    
+
     static let signOfTheCross = """
+    In the name
+    """
+
+    static let _signOfTheCross = """
     In the name of the Father,
     and of the Son,
     and of the Holy Spirit. Amen.

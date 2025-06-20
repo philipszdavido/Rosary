@@ -81,8 +81,15 @@ struct SettingsView: View {
     }
 }
 
+struct SettingsView_Preview: View {    
+    var body: some View {
+        var globalSettings = GlobalSettings()
+        SettingsView()
+            .environmentObject(globalSettings)
+            .preferredColorScheme(globalSettings.theme == .dark ? .dark : .light)
+    }
+}
+
 #Preview {
-    SettingsView()
-        .environmentObject(GlobalSettings())
-        .preferredColorScheme(GlobalSettings().theme == .dark ? .dark : .light)
+    SettingsView_Preview()
 }

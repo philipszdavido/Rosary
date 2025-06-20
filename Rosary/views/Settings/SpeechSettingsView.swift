@@ -24,7 +24,7 @@ struct SpeechSettingsView: View {
                     ))
                     
                     NavigationLink(
-                        destination:  ListOfVoices(settings: settings)
+                        destination:  ListOfVoices()
                     ) {
                         Text("Select Voice (\(settings.voice))")
                     }
@@ -36,7 +36,7 @@ struct SpeechSettingsView: View {
 
 struct ListOfVoices: View {
     
-    public var settings: GlobalSettings
+    @EnvironmentObject var settings: GlobalSettings
     let voices = AVSpeechSynthesisVoice.speechVoices()
 
     var body: some View {
@@ -79,6 +79,6 @@ struct ListOfVoices: View {
 #Preview {
     NavigationView {
         SpeechSettingsView()
-            .environmentObject(GlobalSettings())
-    }
+            
+    }.environmentObject(GlobalSettings())
 }

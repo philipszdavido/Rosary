@@ -55,6 +55,8 @@ struct PrayersViewV2: View {
                                 SinglePrayerView(prayer: $prayer)
                                     .toolbar(.hidden, for: .tabBar)
                                     .navigationBarBackButtonHidden(true)
+                            case .bead:
+                                EmptyView()
                             }
                             
                         } label: {

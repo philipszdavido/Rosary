@@ -18,10 +18,12 @@ struct PrayersView: View {
                     NavigationLink {
 
                         switch prayer.type {
-                            case .rosary:
+                        case .rosary:
                             RosaryView(prayer: $prayer)
-                            case .single:
+                        case .single:
                             SinglePrayerView(prayer: $prayer)
+                        case .bead:
+                            EmptyView()
                         }
                         
                     } label: {

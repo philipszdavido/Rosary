@@ -7,49 +7,55 @@
 
 import SwiftUI
 
-struct CurrentTextDisplayView: View {
-    let words: [String]
-    let highlightIndex: Int
+#Preview {
+    CurrentTextDisplayViewV2(
+        currentText: "My Word is the Truth",
+        range: NSRange(location: 8, length: 5)
+    )
+
+}
+
+struct CurrentTextDisplayViewV2: View {
     
-    let settings = GlobalSettings()
-    private var highlightColor: Color {
-        return settings.highlightColor
+    public var currentText: String
+    public var range: NSRange?
+    
+    func attributedText(fullText: String, range: NSRange?) -> AttributedString {
+        
+        if let range = range {
+
+            let attributedString = NSMutableAttributedString(string: fullText)
+            
+            attributedString.setAttributes(
+                [NSAttributedString.Key.foregroundColor: UIColor.orange],
+                range: range
+            )
+                        
+            return AttributedString(attributedString)
+
+        }
+        
+        return AttributedString(fullText)
+        
     }
     
     var body: some View {
         
-        // Combine Text views for each word
-        words.enumerated().reduce(Text(""), { (result, pair) in
-            
-            let (index, word) = pair
-            
-            let styledWord: Text = index == highlightIndex
-            ? Text(word + " ")
-                .foregroundColor(highlightColor)
-                .bold()
-                : Text(word + " ")
-            
-            return result + styledWord
-            
-        })
-        .font(
-            Font?.init(
-                .system(
-                    size: 20,
-                    weight: .bold,
-                    design: .default
+        Text(attributedText(fullText: currentText, range: range))
+            .font(
+                Font?.init(
+                    .system(
+                        size: 20,
+                        weight: .bold,
+                        design: .default
+                    )
                 )
             )
-        )
-        .font(.body)
-        .fontWeight(.regular)
+            .font(.body)
+            .fontWeight(.regular)
+            
+            .padding(.top, 3.0)
+            .foregroundColor(.gray)
         
-        .padding(.top, 3.0)
-        .foregroundColor(.gray)
-
     }
-}
-
-#Preview {
-    CurrentTextDisplayView(words: ["My Word", "is the Truth"], highlightIndex: 0)
 }

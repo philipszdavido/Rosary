@@ -9,12 +9,17 @@ import SwiftUI
 
 struct RosarySimpleDecadeView: View {
     
-    public var currentBeadIndex: Int
-    public var onBeadTap: (_: Int) -> Void;
+    @Binding public var currentBeadIndex: Int
+    public var prayerSequence: [Prayer]
+    public var onBeadTap: (_: Int, _: Int) -> Void;
     
     let columns = [
         GridItem(.adaptive(minimum: 20), spacing: 20)
     ]
+    
+    func isOurFather(prayer: Prayer) -> Bool {
+        return prayer.name == "Our Father"
+    }
     
     func isOurFather(index: Int) -> Bool {
         if index == 0 {
@@ -26,30 +31,56 @@ struct RosarySimpleDecadeView: View {
         return (index - startOfDecades) % 11 == 0 && index >= startOfDecades
     }
     
+    func getBeadIndex(id: Int, prayer: Prayer) -> Int {
+        
+        let result = prayerSequence[0...id].filter { prayer in
+            return prayer.type == PrayerEnum.bead
+        }
+        let index = result.firstIndex { currentPrayer in
+            return currentPrayer.id == prayer.id
+        }
+
+        guard let prIndex = index else { return -1 }
+
+        return prIndex
+    }
+        
     var body: some View {
         LazyVGrid(columns: columns, spacing: 2) {
-            ForEach(0..<59, id: \.self) { index in
+            ForEach(0..<prayerSequence.count, id: \.self) { index in
+                let prayer = prayerSequence[index]
                 
-                if isOurFather(index: index) {
-                    
-                    OurFatherBeadView(
-                        isCompleted: index == currentBeadIndex,
-                        isActive: index < currentBeadIndex,
-                        onTap: {
-                            onBeadTap(index)
-                        }
-                    )
-                    
-                } else {
-                    
-                    BeadView(
-                        isCompleted: index == currentBeadIndex,
-                        isActive: index < currentBeadIndex,
-                        onTap: {
-                            onBeadTap(index)
-                        }
-                    )
-                    
+                if prayer.type == .bead {
+
+                    if isOurFather(prayer: prayer) {
+
+                        let beadIndex = getBeadIndex(id: index, prayer: prayer)
+
+                        OurFatherBeadView(
+                            isCompleted: beadIndex < currentBeadIndex,
+                            isActive: beadIndex == currentBeadIndex,
+                            onTap: {
+                                //print(
+                                //    beadIndex,
+                                 //   getBeadIndex(id: index, prayer: prayer)
+                                //)
+                                onBeadTap(index, beadIndex)
+                            }
+                        )
+                        
+                    } else {
+
+                        let beadIndex = getBeadIndex(id: index, prayer: prayer)
+
+                        BeadView(
+                            isCompleted: beadIndex < currentBeadIndex,
+                            isActive: beadIndex == currentBeadIndex,
+                            onTap: {
+                                onBeadTap(index, beadIndex)
+                            }
+                        )
+                        
+                    }
                 }
             }
         }
@@ -60,13 +91,19 @@ struct RosarySimpleDecadeView: View {
 
 struct RosarySimpleDecadeView_Preview: View {
     
-    func onBeadTap(index: Int) {
+    @State private var index = 0
+    
+    func onBeadTap(index: Int, beadIndex: Int) {
         print(index)
     }
     
     var body: some View {
         RosarySimpleDecadeView(
-            currentBeadIndex: 9,
+            currentBeadIndex: Binding<Int>(
+                get: { 2 },
+                set: { if ($0 != 0) { $0 }}
+            ),
+            prayerSequence: RosaryUtils().constructRosary(),
             onBeadTap: onBeadTap
         )
     }

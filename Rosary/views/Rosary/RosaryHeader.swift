@@ -12,7 +12,6 @@ struct RosaryHeader: View {
     @Environment(\.dismiss) var dismiss
     public var prayer: Prayer
     public var rosaryType: RosaryType
-    public var pauseAction: () -> Void
     public var speaker: RosarySpeaker;
 
     var title: String {
@@ -59,13 +58,7 @@ struct RosaryHeader: View {
                 )
             
             Spacer()
-            
-            Button(action: {
-                pauseAction()
-            }) {
-                Text("Pause")
-            }
-            
+                        
         }.padding(.horizontal)
         Divider()
     }
@@ -75,7 +68,6 @@ struct RosaryHeader: View {
     RosaryHeader(
         prayer: Prayer(name: "Test", type: .rosary, data: ""),
         rosaryType: RosaryType.auto,
-        pauseAction: {},
         speaker: RosarySpeaker()
     )
 }

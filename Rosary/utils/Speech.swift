@@ -7,184 +7,140 @@
 
 import Foundation
 import AVFoundation
+import UIKit
 
 class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
     private let synthesizer = AVSpeechSynthesizer()
     
-    @Published var words: [String] = []
-    @Published var currentWordIndex: Int = -1 // -1 means no word is highlighted
-    @Published var isSpeaking: Bool = false
-    
-    private var originalText: String = ""
-    private var lastMatchedWordIndex: Int = -1 // NEW
-    
-    @Published public var prayerQueue: [Prayer] = [] // <- New: queue of prayers
-    @Published var currentPrayerIndex: Int = 0 // <- New: track which one we're speaking
+    @Published var currentPrayerIndex = 0
     {
         didSet {
-            print(currentPrayerIndex)
-            currentPrayer = prayerQueue[currentPrayerIndex]
+            setBeadOptions(prayerIndex: currentPrayerIndex)
         }
     }
-    @Published var currentPrayer: Prayer? = nil
-    var speakNextPrayerOnCompletion: Bool = true
-    @Published public var voice: String = "com.apple.ttsbundle.Samantha-compact"
+    public var previousCurrentPrayerIndex = 0
+
+    @Published var isSpeaking = false
+    @Published var isPaused = false
+    @Published var currentWordRange: NSRange?
+    @Published var spokenWord: String = ""
+    var voice = "com.apple.ttsbundle.Samantha-compact"
     
+    var prayerQueue: [Prayer] = []
+    var isAuto = false
+    
+    var isDidFinished: () -> Void = {}
+
     override init() {
         super.init()
         synthesizer.delegate = self
     }
-    
-    func setPrayerQueue(_ prayers: [Prayer]) {
+
+    func speak(prayers: [Prayer], auto: Bool) {
         self.prayerQueue = prayers
-    }
-        
-    func speakPrayer(_ text: String) {
-
-        speakNextPrayerOnCompletion = false;
-
-        stopPrayer()
-        
-        prayerQueue = [PrayerData.constructPrayer(text, name: text)];
-        currentPrayerIndex = 0
-        currentPrayer = prayerQueue[currentPrayerIndex]
-
-        speakCurrentPrayer()
-
-    }
-    
-    func speakNextPrayer() {
-        stopPrayer()
-        speakNextPrayerOnCompletion = false;
-        speakCurrentPrayer()
-    }
-    
-    func speakPreviousPrayer() {
-        stopPrayer()
-        speakNextPrayerOnCompletion = false;
-        speakCurrentPrayer()
-        currentPrayerIndex -= 1
-    }
-    
-    func speakPrayers(_ prayers: [Prayer]) {
-
-        speakNextPrayerOnCompletion = true;
-
-        stopPrayer()
-        
-        prayerQueue = prayers
-        currentPrayerIndex = 0
-        currentPrayer = prayerQueue[currentPrayerIndex]
-
-        speakCurrentPrayer()
-        
+        self.currentPrayerIndex = 0
+        self.isAuto = auto
+        speakCurrent()
     }
 
-    private func speakCurrentPrayer() {
-        
-        guard currentPrayerIndex < prayerQueue.count else {
-            isSpeaking = false
-            currentWordIndex = -1
-            return
-        }
-
-        self.setBeadOptions(wordIndex: self.currentWordIndex, prayerIndex: self.currentPrayerIndex);
+    func speakCurrent() {
+        guard currentPrayerIndex < prayerQueue.count else { return }
+        isSpeaking = true
+        isPaused = false
+        currentWordRange = nil
+        spokenWord = ""
 
         let text = prayerQueue[currentPrayerIndex].data
-        originalText = text
-        words = text.components(separatedBy: " ")
-        currentWordIndex = -1
-
         let utterance = AVSpeechUtterance(string: text)
-        //utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-        print(voice)
         utterance.voice = AVSpeechSynthesisVoice(identifier: voice)
-        utterance.rate = 0.45
-        
-        isSpeaking = true
-        synthesizer.speak(utterance);
-        
-    }
-    
-    func stopPrayer() {
-
-        if synthesizer.isSpeaking {
-            isSpeaking = false
-            synthesizer.stopSpeaking(at: .immediate)
-        }
-
+        utterance.rate = 0.45  // Adjust for better word highlighting timing
+        synthesizer.speak(utterance)
     }
 
-    // Called at each word boundary
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, willSpeakRangeOfSpeechString characterRange: NSRange, utterance: AVSpeechUtterance) {
-        let textNSString = utterance.speechString as NSString
-        let spokenSubstring = textNSString.substring(with: characterRange)
-        
-        // Search only AFTER the last matched index
-        //let searchRange = (lastMatchedWordIndex + 1)..<words.count
-        DispatchQueue.main.async {
-            self.lastMatchedWordIndex += 1 // update last matched
-            self.currentWordIndex += 1
-//            print(
-//                "speechSynthesizer",
-//                self.currentWordIndex,
-//                self.lastMatchedWordIndex,
-//                spokenSubstring
-//            )
-        }
-
-//        if let index = words[searchRange].firstIndex(where: {
-//            $0.trimmingCharacters(in: .punctuationCharacters) == spokenSubstring.trimmingCharacters(in: .punctuationCharacters)
-//        }) {
-//            let actualIndex = index + searchRange.lowerBound // Correct the offset
-//            DispatchQueue.main.async {
-//                self.currentWordIndex = actualIndex
-//            }
-//        }
-    }
-
-    // Called when finished
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.isSpeaking = false
-            self.currentWordIndex = -1;
-            self.lastMatchedWordIndex = -1
-                                    
-            if (self.currentPrayerIndex + 1 < self.prayerQueue.count) {
-                self.currentPrayerIndex += 1
-                self.currentPrayer = self.prayerQueue[self.currentPrayerIndex]
-
-                if self.speakNextPrayerOnCompletion {
-                    self.speakCurrentPrayer() // <- New: automatically move to next prayer
-                }
-
-            }
-            
+    func speakNext() {
+        guard !isSpeaking else { return }
+        if currentPrayerIndex < prayerQueue.count {
+            speakCurrent()
         }
     }
     
-    func setBeadOptions(wordIndex: Int, prayerIndex: Int) {}
-    
+    func speakPrevious() {
+        guard !isSpeaking else { return }
+        currentPrayerIndex -= 1
+        if currentPrayerIndex < prayerQueue.count {
+            speakCurrent()
+        }
+    }
+
     func pause() {
         if synthesizer.isSpeaking {
+            synthesizer.pauseSpeaking(at: .word)
             isSpeaking = false
-            synthesizer.pauseSpeaking(at: .word) // or .immediate
+            isPaused = true
         }
     }
-    
+
     func resume() {
         if synthesizer.isPaused {
             synthesizer.continueSpeaking()
             isSpeaking = true
+            isPaused = false
         }
     }
-    
-    func setVoice(voiceToSet: String) {
-        // let utterance = AVSpeechUtterance(string: "Hello world")
-        // utterance.voice = AVSpeechSynthesisVoice(identifier: "com.apple.ttsbundle.Samantha-compact")
-        voice = voiceToSet
+
+    func stop() {
+        synthesizer.stopSpeaking(at: .immediate)
+        isSpeaking = false
+        isPaused = false
+        currentWordRange = nil
+        spokenWord = ""
     }
+
+    func reset() {
+        stop()
+        currentPrayerIndex = 0
+    }
+
+    // MARK: - AVSpeechSynthesizerDelegate
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        isSpeaking = false
+        isPaused = false
+        currentWordRange = nil
+        spokenWord = ""
+
+        if isAuto {
+            currentPrayerIndex += 1
+            if currentPrayerIndex < prayerQueue.count {
+                speakCurrent()
+            }
+        }
         
+        isDidFinished()
+    }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, willSpeakRangeOfSpeechString characterRange: NSRange, utterance: AVSpeechUtterance) {
+        // Track the range of the currently spoken word
+        currentWordRange = characterRange
+        
+        let nsString = utterance.speechString as NSString
+        let word = nsString.substring(with: characterRange)
+        
+        let attributedString = NSMutableAttributedString(
+            string: nsString as String
+        )
+        attributedString
+            .setAttributes(
+                [NSAttributedString.Key.foregroundColor: UIColor.orange],
+                range: currentWordRange!
+            )
+        
+        DispatchQueue.main.async {
+            self.spokenWord = word
+        }
+    }
+
+    func setBeadOptions(prayerIndex: Int) {}
 }
 
 class RosarySpeaker: PrayerSpeaker {
@@ -195,18 +151,27 @@ class RosarySpeaker: PrayerSpeaker {
         super.init()
     }
     
-    func start(rosary: [Prayer]) {
-        super.speakPrayers(rosary)
-    }
-    
-    override func setBeadOptions(wordIndex: Int, prayerIndex: Int) {
-                
-        let currentPrayer: String = prayerQueue[prayerIndex].name
+    override func setBeadOptions(prayerIndex: Int) {
         
-        if currentPrayer == "Our Father" || currentPrayer == "Glory Be" || currentPrayer == "Hail Mary" {
-            bead += 1
+        let currentPrayer = prayerQueue[prayerIndex]
+        
+        if currentPrayer.type == .bead {
+            
+            if prayerIndex <= 0 {
+                bead = -1
+                return
+            }
+            
+            if super.previousCurrentPrayerIndex > prayerIndex {
+                bead -= 1
+            } else {
+                bead += 1
+            }
+            
         }
-                
+        
+        super.previousCurrentPrayerIndex = prayerIndex
+        
     }
-    
+
 }

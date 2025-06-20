@@ -13,6 +13,7 @@ struct BeadView: View {
     
     @State private var isTapped = false
     var onTap: () -> Void;
+    @EnvironmentObject var settings: GlobalSettings
 
     var body: some View {
         Circle()
@@ -40,6 +41,7 @@ struct OurFatherBeadView: View {
 
     @State private var isTapped = false
     var onTap: () -> Void;
+    @EnvironmentObject var settings: GlobalSettings
 
     var body: some View {
         Circle()
@@ -61,14 +63,19 @@ struct OurFatherBeadView: View {
     }
 }
 
-#Preview {
-    BeadView(isCompleted: false, isActive: true, onTap: {})
-    BeadView(isCompleted: false, isActive: false, onTap: {})
-    BeadView(isCompleted: true, isActive: true, onTap: {})
-    OurFatherBeadView(isCompleted: false, isActive: true, onTap: {})
-    OurFatherBeadView(isCompleted: true, isActive: true, onTap: {})
+struct Bead_Previews: View {
+    var body: some View {
+        BeadView(isCompleted: false, isActive: true, onTap: {})
+        BeadView(isCompleted: false, isActive: false, onTap: {})
+        BeadView(isCompleted: true, isActive: true, onTap: {})
+        OurFatherBeadView(isCompleted: false, isActive: true, onTap: {})
+        OurFatherBeadView(isCompleted: true, isActive: true, onTap: {})
+    }
 }
 
+#Preview {
+    Bead_Previews().environmentObject(GlobalSettings())
+}
 
 struct BeadViewV2: View {
 
