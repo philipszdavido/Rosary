@@ -34,7 +34,18 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
     
     override init() {
         super.init()
+        configureAudioSession()
         synthesizer.delegate = self
+    }
+    
+    func configureAudioSession() {
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
+            try session.setActive(true)
+        } catch {
+            print("Failed to set up audio session:", error)
+        }
     }
     
     func speak(prayers: [Prayer], auto: Bool) {
@@ -117,10 +128,12 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
         spokenWord = ""
         
         if isAuto {
-            currentPrayerIndex += 1
+
             if currentPrayerIndex < prayerQueue.count {
+                currentPrayerIndex += 1
                 speakCurrent()
             }
+            
         }
         
         isDidFinished()
