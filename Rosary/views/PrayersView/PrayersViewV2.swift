@@ -16,7 +16,7 @@ struct PrayersViewV2: View {
         data: ""
     )
     
-    @State var quickPrayers = PrayerData.prayers as [Prayer];
+    @State var quickPrayers = PrayerData.quickPrayers as [Prayer];
         
     var body: some View {
         NavigationStack {
@@ -55,6 +55,8 @@ struct PrayersViewV2: View {
                                 SinglePrayerView(prayer: $prayer)
                                     .toolbar(.hidden, for: .tabBar)
                                     .navigationBarBackButtonHidden(true)
+                            case .series:
+                                SeriesPrayerView(prayer: $prayer)
                             case .bead:
                                 EmptyView()
                             }

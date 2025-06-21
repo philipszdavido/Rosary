@@ -112,34 +112,3 @@ struct Bead_Previews: View {
 #Preview {
     Bead_Previews().environmentObject(GlobalSettings())
 }
-
-struct BeadViewV2: View {
-
-    var body: some View {
-        Circle()
-            //.fill(isCompleted ? Color.green : (isActive ? Color.blue : Color.gray))
-            .frame(width: 30, height: 40)
-            .overlay(
-                Circle().stroke(Color.white, lineWidth: 2)
-            )
-            .shadow(radius: 5)
-            //.scaleEffect(isActive ? 1.2 : 1)  // Make the active bead slightly bigger
-            //.animation(.spring(), value: isActive)  // Smooth animation for active beads
-    }
-}
-
-struct OurFatherBeadViewV2: View {
-
-    var body: some View {
-        Circle()
-            //.fill(isCompleted ? Color.green : (isActive ? Color.blue : Color.gray))
-            .frame(width: 40, height: 50)
-            .overlay(
-                Circle().stroke(Color.white, lineWidth: 2)
-            )
-            .shadow(radius: 5)
-            //.scaleEffect(isActive ? 1.2 : 1)  // Make the active bead slightly bigger
-            //.animation(.spring(), value: isActive)  // Smooth animation for active beads
-    }
-}
-

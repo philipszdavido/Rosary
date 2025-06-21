@@ -10,7 +10,6 @@ import Foundation
 class PrayerData {
     
     static let prayers = [
-        Prayer(name: "Rosary", type: PrayerEnum.rosary, data: ""),
         Prayer(
             name: "Our Father",
             type: PrayerEnum.single,
@@ -46,6 +45,22 @@ class PrayerData {
             type: PrayerEnum.single,
             data: PrayerData
                 .actOfContrition)
+    ]
+    
+    static let quickPrayers = [
+        Prayer(
+            name: "Short Prayer", type: PrayerEnum.single, data: PrayerData.shortPrayer
+        ),
+        Prayer(
+            name: "Dedication (St. Ignatius Loyola)",
+            type: PrayerEnum.single,
+            data: PrayerData.dedicationOfTheDay
+        ),
+        Prayer(
+            name: "Morning Offering",
+            type: PrayerEnum.single,
+            data: PrayerData
+                .morningOffering)
     ]
     
     static func constructPrayer(_ data: String, name: String, type: PrayerEnum = .single) -> Prayer {
@@ -323,6 +338,76 @@ class PrayerData {
     
     static let fatima = """
     O my Jesus, forgive us our sins, save us from the fires of hell, lead all souls to Heaven, especially those in most need of your mercy.
+    """
+    
+    static let shortPrayer = """
+    Lord help me
+
+    to remember
+
+    that nothing
+
+    is going to happen
+
+    to me today
+
+    that You and I
+
+    together can’t handle.
+
+    Amen.
+    """
+    
+    static let dedicationOfTheDay = """
+    Father, I dedicate this new day to you;
+
+    as I go about my work.
+
+    I ask you to bless those with whom I come in contact.
+
+    Lord, I pray for all men and women
+
+    who work to earn their living;
+
+    give them satisfaction in what they do.
+
+    Spirit of God,
+
+    comfort the unemployed and their families;
+
+    they are your children and my brothers and sisters.
+
+    I ask you to help them find work soon.
+
+    Amen.    
+    """
+    
+    static let morningOFfering = """
+    O Jesus,
+
+    through the Immaculate Heart of Mary,
+
+    I offer You my prayers, works,
+
+    joys and sufferings
+
+    of this day for all the intentions
+
+    of Your Sacred Heart,
+
+    in union with the Holy Sacrifice of the Mass
+
+    throughout the world,
+
+    in reparation for my sins,
+
+    for the intentions of all my relatives and friends,
+
+    and in particular
+
+    for the intentions of the Holy Father.
+
+    Amen.
     """
     
 }

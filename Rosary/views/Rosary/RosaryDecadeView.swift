@@ -22,15 +22,9 @@ struct RosaryDecadeViewV2: View {
 
                 if isOurFather(index: index) {
                     
-                    OurFatherBeadViewV2()
-                        .onTapGesture {
-                        }
                     
                 } else {
                     
-                    BeadViewV2()
-                        .onTapGesture {
-                        }
                     
                 }
             }

@@ -14,6 +14,11 @@ struct AddCustomRosary: View {
     private var rosaryPrayers = PrayerData.prayers
     
     @State var searchText = ""
+    {
+        didSet {
+            print(searchText)
+        }
+    }
     
     var body: some View {
         NavigationStack {
@@ -23,9 +28,16 @@ struct AddCustomRosary: View {
                 .toolbar {
                     ToolbarItem(
                         placement: ToolbarItemPlacement.topBarTrailing) {
-                            Button("Add Prayer") {
-                                sheetIsPresented.toggle()
+                            HStack {
+                                Button("Add Prayer") {
+                                    sheetIsPresented.toggle()
+                                }
+                                
+                                Button("Clear All") {
+                                    prayers = []
+                                }
                             }
+                            
                         }
                 }
 

@@ -21,7 +21,7 @@ struct SinglePrayerView: View {
                 Image(systemName: "chevron.left")
             }.padding(.leading)
             Spacer()
-            Text(prayer.name)
+            Text("Simple Prayer")
                 .font(
                     Font?.init(
                         .system(
@@ -34,43 +34,30 @@ struct SinglePrayerView: View {
             Spacer()
         }
         Divider()
-        
-        VStack {
             
-            ScrollView {
+        CardView {
+            
+            Text(prayer.name)
+                .font(.headline)
+            
+            if (speaker.isSpeaking) {
                 
-                if (speaker.isSpeaking) {
-
-                    TextDisplayView(
-                        word: prayer.data,
-                        range: speaker.currentWordRange
-                    )
-                    
-                } else {
-                    
-                    Text(prayer.data)
-                        .font(
-                            Font?.init(
-                                .system(
-                                    size: 24,
-                                    weight: .bold,
-                                    design: .default
-                                )
-                            )
-                        )
-                        .font(.body)
-                        .fontWeight(.regular)
-                        .multilineTextAlignment(.center)
-                        
-                        .padding(.top, 20.0)
-
-                }
-                                                
+                TextDisplayView(
+                    word: prayer.data,
+                    range: speaker.currentWordRange
+                )
+                .foregroundColor(.secondary)
+                
+                
+            } else {
+                
+                Text(prayer.data)
+                    .foregroundColor(.secondary)
+                
             }
-                
-            Spacer()
+            
         }
-        .padding(.horizontal, 20.0)
+            
         
         Spacer()
         
@@ -105,11 +92,11 @@ struct SinglePrayerView: View {
                         Prayer(
                             name: "Hail Mary",
                             type: .single,
-                            data: PrayerData.hailMary
+                            data: PrayerData._hailMary
                         )
                     )
-        ).environmentObject(GlobalSettings())
-    }
+        )
+    }.environmentObject(GlobalSettings())
 }
 
 struct TextDisplayView: View {
@@ -140,20 +127,48 @@ struct TextDisplayView: View {
     var body: some View {
 
         Text(setAttribute(word: word, range: range))
-        .font(
-            Font?.init(
-                .system(
-                    size: 24,
-                    weight: .bold,
-                    design: .default
+
+    }
+}
+
+struct CardView<Content: View>: View {
+    
+    @EnvironmentObject private var settings: GlobalSettings
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            content.font(
+                Font?.init(
+                    .system(
+                        size: 19,
+                        weight: .regular,
+                        design: .default
+                    )
                 )
             )
+            .multilineTextAlignment(.leading)
+            
+        }
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(Color(.systemBackground))
+                //.shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+                .stroke(
+                    settings
+                        .getColorWithKey(
+                            SimplePrayerSettings.borderColor
+                                .rawValue) ?? .mint,
+                    lineWidth: 1
+                )
         )
-        .font(.body)
-        .fontWeight(.regular)
-        .multilineTextAlignment(.center)
+        .padding(.horizontal)
         
-        .padding(.top, 20.0)
-
     }
 }

@@ -45,6 +45,13 @@ enum BeadColorType: String, CaseIterable, Identifiable {
     }
 }
 
+enum SimplePrayerSettings: String, CaseIterable, Identifiable {
+
+    case borderColor
+    
+    var id: String { rawValue }
+        
+}
 
 extension UserDefaults {
     
@@ -56,6 +63,23 @@ extension UserDefaults {
     
     func getColor() -> Color? {
         guard let data = data(forKey: "highlightColor") else { return nil }
+        let uiColor =  NSKeyedUnarchiver.unarchiveObject(with: data) as? UIColor
+        
+        guard let uiColor = uiColor else {
+            return nil
+        }
+        
+        return Color(uiColor)
+    }
+    
+    func setColorWithKey(color: Color, _ key: String) {
+        let uiColor = UIColor(color)
+        let data = NSKeyedArchiver.archivedData(withRootObject: uiColor)
+        set(data, forKey: key)
+    }
+    
+    func getColorWithKey(_ key: String) -> Color? {
+        guard let data = data(forKey: key) else { return nil }
         let uiColor =  NSKeyedUnarchiver.unarchiveObject(with: data) as? UIColor
         
         guard let uiColor = uiColor else {
@@ -141,12 +165,34 @@ class GlobalSettings: ObservableObject {
         }
     }
     
+    @Published var simplePrayerSettings: [SimplePrayerSettings : Any ] = [:] {
+        didSet {
+            
+            for (key, value) in simplePrayerSettings {
+                switch key {
+                case .borderColor:
+                    if let color = value as? Color {
+                        userDefaults.setColorWithKey(color: color, key.rawValue)
+                    }
+                }
+            }
+        }
+    }
+    
     func color(for type: BeadColorType) -> Color {
         beadColors[type] ?? type.defaultColor
     }
     
     func setColor(_ color: Color, for type: BeadColorType) {
         beadColors[type] = color
+    }
+    
+    func setColorWithKey(_ color: Color, _ key: String) {
+        userDefaults.setColorWithKey(color: color, key)
+    }
+    
+    func getColorWithKey(_ key: String) -> Color {
+        return userDefaults.getColorWithKey(key) ?? .blue
     }
     
     init () {
@@ -162,6 +208,16 @@ class GlobalSettings: ObservableObject {
         
         self.voice = userDefaults.string(forKey: "voice") ?? "com.apple.ttsbundle.Samantha-compact"
         self.speakAloud = userDefaults.bool(forKey: "speakAloud") ?? true
+        
+        for simplePrayerCase in SimplePrayerSettings.allCases {
+            switch simplePrayerCase {
+            case .borderColor:
+                if let color = userDefaults.getColorWithKey(simplePrayerCase.rawValue) {
+                    simplePrayerSettings[simplePrayerCase] = color
+                }
+            }
+        }
+
     }
     
 }

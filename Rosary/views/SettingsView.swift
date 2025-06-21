@@ -46,6 +46,25 @@ struct SettingsView: View {
                     
                 }
                 
+                Section("Simple Prayer") {
+                    ColorPicker(
+                        "Border Color",
+                        selection: Binding<Color>(
+                            get: { settings.getColorWithKey(
+                                SimplePrayerSettings.borderColor.rawValue
+                            )
+                            },
+                            set: {
+                                settings
+                                    .setColorWithKey(
+                                        $0,
+                                        SimplePrayerSettings.borderColor.rawValue
+                                    )
+                            }
+                        )
+                    )
+                }
+                
                 Section("Rosary") {
                     
                     // show bead counting

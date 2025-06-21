@@ -23,13 +23,19 @@ struct ContentView: View {
             }
             .tag(1)
             
+            AddCustomRosary()
+                .tabItem {
+                    Image(systemName: "plus.app")
+                    Text("Add Custom Rosary")
+                }.tag(2)
+            
             
             SettingsView()
                 .tabItem {
                     Image(systemName: "gear")
                     Text("Settings")
                 }
-                .tag(2)
+                .tag(3)
             
         }
     }

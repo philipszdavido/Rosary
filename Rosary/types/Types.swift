@@ -13,15 +13,23 @@ enum RosaryType: Int {
     case none = 3
 }
 
-struct Prayer : Identifiable, Hashable {
-    let id: Int = UUID().hashValue;
-    let name: String;
-    let type: PrayerEnum;
-    let data: String;
+struct Prayer: Identifiable, Hashable, Codable {
+    let id: Int
+    let name: String
+    let type: PrayerEnum
+    let data: String
+
+    init(id: Int = UUID().hashValue, name: String, type: PrayerEnum, data: String) {
+        self.id = id
+        self.name = name
+        self.type = type
+        self.data = data
+    }
 }
 
-enum PrayerEnum: Int {
+enum PrayerEnum: Int, Codable {
     case single = 0
     case rosary = 1
-    case bead = 3
+    case series = 3
+    case bead = 4
 }
