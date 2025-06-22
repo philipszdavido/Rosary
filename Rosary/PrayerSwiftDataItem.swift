@@ -9,12 +9,17 @@ import Foundation
 import SwiftData
 
 @Model
-final class PrayerSwiftDataItem {
-    var data: String
+class PrayerSwiftDataItem {
+    var id: UUID
     var name: String
-    
-    init(data: String, name: String) {
-        self.data = data
+    var data: String
+    var orderIndex: Int
+
+    init(name: String, data: String, orderIndex: Int) {
+        self.id = UUID()
         self.name = name
+        self.data = data
+        self.orderIndex = orderIndex
     }
 }
+

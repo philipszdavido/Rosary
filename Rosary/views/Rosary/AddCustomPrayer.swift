@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct AddCustomRosary: View {
+struct AddCustomPrayer: View {
     
     @Environment(\.modelContext) private var modelContext;
     @Query var prayers: [PrayerSwiftDataItem];
@@ -29,9 +29,7 @@ struct AddCustomRosary: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                ListPrayers(prayers: filteredPrayers)
-            }.listStyle(.plain)
+            ListPrayers(prayers: prayers)
                 .toolbar {
                     ToolbarItem(
                         placement: ToolbarItemPlacement.topBarTrailing) {
@@ -69,12 +67,10 @@ struct AddCustomRosary: View {
                 
                 List {
                     ForEach(rosaryPrayers) { prayer in
-                        HStack {
-                            Text(prayer.name)
-                            Spacer()
-                        }.onTapGesture {
-                            addItem(prayer.data, prayer.name)
-                        }.padding(10)
+                        PrayerItem(
+                            prayer: prayer,
+                            nextOrderIndex: (prayers.map { $0.orderIndex }.max() ?? -1) + 1
+                            )
                     }
                 }.listStyle(.plain)
             }
@@ -83,9 +79,36 @@ struct AddCustomRosary: View {
 
     }
     
+}
+
+struct PrayerItem: View {
+    
+    public var prayer: Prayer;
+    @Environment(\.modelContext) private var modelContext;
+    @State var clicked = false
+    public var nextOrderIndex: Int
+
+    var body: some View {
+        HStack {
+            Text(prayer.name)
+            Spacer()
+            
+            if clicked {
+                Image(systemName: "checkmark")
+            }
+            
+        }.onTapGesture {
+            clicked.toggle()
+            addItem(prayer.data, prayer.name)
+        }.padding(10)
+    }
+    
     private func addItem(_ data: String, _ title: String) {
         withAnimation {
-            let newItem = PrayerSwiftDataItem(data: data, name: title)
+            let newItem = PrayerSwiftDataItem(
+                name: title, data: data,
+                orderIndex: nextOrderIndex
+            )
             modelContext.insert(newItem)
         }
     }
@@ -95,21 +118,31 @@ struct AddCustomRosary: View {
 struct ListPrayers: View {
     
     @Environment(\.modelContext) private var modelContext;
-    public var prayers: [PrayerSwiftDataItem]
-    
+    var prayers: [PrayerSwiftDataItem]
+    @State private var prayersSorted: [PrayerSwiftDataItem] = []
+
     var body: some View {
-        ForEach(prayers) { prayer in
-            HStack {
-                Text(prayer.name)
-                Spacer()
-                
-            }.padding(10)
-        }.onDelete { indexSet in
-            print(indexSet)
-            deleteItems(offsets: indexSet)
-        }
+        List {
+            
+            ForEach(prayers) { prayer in
+                HStack {
+                    Text(prayer.name)
+                    Spacer()
+                    
+                }.padding(10)
+            }.onDelete { indexSet in
+                print(indexSet)
+                deleteItems(offsets: indexSet)
+            }.onMove(perform: move)
+        }.listStyle(.plain)
+            .onAppear {
+                prayersSorted = prayers
+            }
+            .toolbar {
+                EditButton()
+            }
     }
-    
+
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
@@ -117,10 +150,25 @@ struct ListPrayers: View {
             }
         }
     }
+    
+    func move(from source: IndexSet, to destination: Int) {
+        print(source, destination)
+        prayersSorted.move(fromOffsets: source, toOffset: destination)
 
+        for (index, prayer) in prayersSorted.enumerated() {
+            prayer.orderIndex = index
+        }
+
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to save reordered items: \(error.localizedDescription)")
+        }
+    }
+    
 }
 
 #Preview {
-    AddCustomRosary()
+    AddCustomPrayer()
         .modelContainer(for: PrayerSwiftDataItem.self, inMemory: true)
 }

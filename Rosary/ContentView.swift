@@ -23,10 +23,10 @@ struct ContentView: View {
             }
             .tag(1)
             
-            AddCustomRosary()
+            AddCustomPrayerView()
                 .tabItem {
                     Image(systemName: "plus.app")
-                    Text("Add Custom Rosary")
+                    Text("Add Custom Prayer")
                 }.tag(2)
             
             
