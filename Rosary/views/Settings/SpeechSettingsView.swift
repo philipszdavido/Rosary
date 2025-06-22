@@ -12,6 +12,10 @@ struct SpeechSettingsView: View {
     
     @EnvironmentObject var settings: GlobalSettings
     
+    var formatVoiceDisplay: String {
+        return String(settings.voice.split(separator: ".").last ?? "")
+    }
+    
     var body: some View {
         
         List {
@@ -25,7 +29,7 @@ struct SpeechSettingsView: View {
                     NavigationLink(
                         destination:  ListOfVoices()
                     ) {
-                        Text("Select Voice (\(settings.voice))")
+                        Text("Select Voice (\(formatVoiceDisplay))")
                     }
                 }
             }
@@ -42,22 +46,22 @@ struct ListOfVoices: View {
         List {
             ForEach(voices, id: \.self) { voice in
                 HStack {
-                    
+                                        
+                    Text(voice.name)
+                    Text("(\(voice.language))")
                     if settings.voice == voice.identifier {
                         Image(systemName: "checkmark")
                             .foregroundColor(.green)
                     }
-                    
-                    Text(voice.name)
-                    Text("(\(voice.language))")
+
                     Spacer()
                     Text(voice.quality == .enhanced ? "Enhanced" : "Default")
                 }.onTapGesture {
                     settings.voice = voice.identifier
                     print(">>> Set voice to '%s'\n", voice.identifier)
-                }
+                }.padding(10)
             }
-        }
+        }.navigationTitle("Voices")
     }
     
     func listAvailableVoices() {

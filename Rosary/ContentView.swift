@@ -10,7 +10,7 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    // @Query private var items: [PrayerSwiftDataItem]
     @State private var selectedTab: Int = 1
 
     var body: some View {
@@ -42,15 +42,15 @@ struct ContentView: View {
 
     private func addItem() {
         withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
+            // let newItem = PrayerSwiftDataItem(data: "")
+            // modelContext.insert(newItem)
         }
     }
 
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                modelContext.delete(items[index])
+                // modelContext.delete(items[index])
             }
         }
     }
@@ -58,6 +58,6 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: PrayerSwiftDataItem.self, inMemory: true)
         .environmentObject(GlobalSettings())
 }

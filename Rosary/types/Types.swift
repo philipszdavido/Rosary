@@ -33,3 +33,4 @@ enum PrayerEnum: Int, Codable {
     case series = 3
     case bead = 4
 }
+

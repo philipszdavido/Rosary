@@ -62,6 +62,29 @@ enum RosaryMystery: String {
         
     }
     
+    static func all() -> [Prayer] {
+        
+        let mystery = Mystery()
+        var prayers: [Prayer] = []
+        
+        let mysteries = [
+            mystery.Joyful,
+            mystery.Luminous,
+            mystery.Sorrowful,
+            mystery
+                .Glorious
+        ]
+        
+        for mystery in mysteries {
+            for prayer in mystery {
+                prayers += [Prayer(name: prayer, type: PrayerEnum.single, data: prayer)]
+            }
+        }
+        
+        return prayers
+
+    }
+    
 }
 
 

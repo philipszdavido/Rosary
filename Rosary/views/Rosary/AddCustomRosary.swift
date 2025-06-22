@@ -6,24 +6,31 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AddCustomRosary: View {
     
-    @State private var prayers: [Prayer] = RosaryUtils().constructRosary();
+    @Environment(\.modelContext) private var modelContext;
+    @Query var prayers: [PrayerSwiftDataItem];
     @State private var sheetIsPresented: Bool = false
-    private var rosaryPrayers = PrayerData.prayers
+    private var rosaryPrayers = PrayerData.prayers + RosaryMystery.all()
     
     @State var searchText = ""
-    {
-        didSet {
-            print(searchText)
+    
+    var filteredPrayers: [PrayerSwiftDataItem] {
+        if searchText.isEmpty {
+            return prayers
+        } else {
+            return prayers.filter {
+                $0.name.localizedCaseInsensitiveContains(searchText)
+            }
         }
     }
     
     var body: some View {
         NavigationStack {
             List {
-                ListPrayers(prayers: $prayers)
+                ListPrayers(prayers: filteredPrayers)
             }.listStyle(.plain)
                 .toolbar {
                     ToolbarItem(
@@ -34,13 +41,18 @@ struct AddCustomRosary: View {
                                 }
                                 
                                 Button("Clear All") {
-                                    prayers = []
+                                    
+                                    
+                                    for index in prayers.indices {
+                                        modelContext.delete(prayers[index])
+                                    }
+                                    
                                 }
                             }
                             
                         }
                 }
-
+            
         }.sheet(isPresented: $sheetIsPresented) {
             
         } content: {
@@ -61,8 +73,8 @@ struct AddCustomRosary: View {
                             Text(prayer.name)
                             Spacer()
                         }.onTapGesture {
-                            prayers += [prayer]
-                        }
+                            addItem(prayer.data, prayer.name)
+                        }.padding(10)
                     }
                 }.listStyle(.plain)
             }
@@ -70,10 +82,20 @@ struct AddCustomRosary: View {
         .searchable(text: $searchText)
 
     }
+    
+    private func addItem(_ data: String, _ title: String) {
+        withAnimation {
+            let newItem = PrayerSwiftDataItem(data: data, name: title)
+            modelContext.insert(newItem)
+        }
+    }
+
 }
 
 struct ListPrayers: View {
-    @Binding public var prayers: [Prayer]
+    
+    @Environment(\.modelContext) private var modelContext;
+    public var prayers: [PrayerSwiftDataItem]
     
     var body: some View {
         ForEach(prayers) { prayer in
@@ -81,16 +103,24 @@ struct ListPrayers: View {
                 Text(prayer.name)
                 Spacer()
                 
-                Button {
-                } label: {
-                    Image(systemName: "trash")
-                }
-
+            }.padding(10)
+        }.onDelete { indexSet in
+            print(indexSet)
+            deleteItems(offsets: indexSet)
+        }
+    }
+    
+    private func deleteItems(offsets: IndexSet) {
+        withAnimation {
+            for index in offsets {
+                modelContext.delete(prayers[index])
             }
         }
     }
+
 }
 
 #Preview {
     AddCustomRosary()
+        .modelContainer(for: PrayerSwiftDataItem.self, inMemory: true)
 }
