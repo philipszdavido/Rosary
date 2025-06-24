@@ -80,11 +80,21 @@ class PrayerData {
         return PrayerData.constructPrayer(gloryBe, name: "Glory Be", type: type)
     }
 
-    static let ourFather = """
-    Our Father,
+    static let _signOfTheCross = """
+    In the name
+    """
+
+    static let signOfTheCross = """
+    In the name of the Father,
+    and of the Son,
+    and of the Holy Spirit. Amen.
     """
 
     static let _ourFather = """
+    Our Father,
+    """
+
+    static let ourFather = """
     Our Father,
     Who art in heaven,
     hallowed be Thy name.
@@ -97,11 +107,11 @@ class PrayerData {
     but deliver us from evil. Amen.
     """
 
-    static let hailMary = """
+    static let _hailMary = """
     Hail Mary
     """
     
-    static let _hailMary = """
+    static let hailMary = """
     Hail Mary, full of grace, the Lord is with thee.
     Blessed art thou amongst women,
     and blessed is the fruit of thy womb, Jesus.
@@ -110,11 +120,11 @@ class PrayerData {
     now and at the hour of our death. Amen.
     """
 
-    static let gloryBe = """
+    static let _gloryBe = """
     Glory
     """
     
-    static let _gloryBe = """
+    static let gloryBe = """
     Glory be to the Father,
     and to the Son,
     and to the Holy Spirit,
@@ -123,11 +133,11 @@ class PrayerData {
     world without end. Amen.
     """
 
-    static let apostlesCreed = """
+    static let _apostlesCreed = """
     I believe
     """
 
-    static let _apostlesCreed = """
+    static let apostlesCreed = """
     I believe in God,
     the Father Almighty,
     Creator of Heaven and earth;
@@ -271,16 +281,6 @@ class PrayerData {
     static let soulsOfFaithfulDeparted = """
     May the souls of the faithful departed,
     through the mercy of God, rest in peace. Amen.
-    """
-
-    static let signOfTheCross = """
-    In the name
-    """
-
-    static let _signOfTheCross = """
-    In the name of the Father,
-    and of the Son,
-    and of the Holy Spirit. Amen.
     """
     
     static let stFrancisAsisiPrayer = """

@@ -16,6 +16,7 @@ struct AddCustomPrayer: View {
     private var rosaryPrayers = PrayerData.prayers + RosaryMystery.all()
     
     @State var searchText = ""
+    public var prayerTitle: String
     
     var filteredPrayers: [PrayerSwiftDataItem] {
         if searchText.isEmpty {
@@ -27,10 +28,20 @@ struct AddCustomPrayer: View {
         }
     }
     
+    init(prayerTitle: String) {
+        self.prayerTitle = prayerTitle
+    }
+    
     var body: some View {
         NavigationStack {
             ListPrayers(prayers: prayers)
                 .toolbar {
+                    
+                    ToolbarItem(
+                        placement: ToolbarItemPlacement.topBarLeading) {
+                            Text(prayerTitle)
+                        }
+                    
                     ToolbarItem(
                         placement: ToolbarItemPlacement.topBarTrailing) {
                             HStack {
@@ -105,11 +116,11 @@ struct PrayerItem: View {
     
     private func addItem(_ data: String, _ title: String) {
         withAnimation {
-            let newItem = PrayerSwiftDataItem(
-                name: title, data: data,
-                orderIndex: nextOrderIndex
-            )
-            modelContext.insert(newItem)
+//            let newItem = PrayerSwiftDataItem(
+//                name: title, data: data,
+//                orderIndex: nextOrderIndex
+//            )
+//            modelContext.insert(newItem)
         }
     }
 
@@ -169,6 +180,6 @@ struct ListPrayers: View {
 }
 
 #Preview {
-    AddCustomPrayer()
+    AddCustomPrayer( prayerTitle: "Title")
         .modelContainer(for: PrayerSwiftDataItem.self, inMemory: true)
 }
