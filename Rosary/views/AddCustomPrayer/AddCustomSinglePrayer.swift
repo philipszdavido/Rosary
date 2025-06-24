@@ -13,18 +13,19 @@ struct AddCustomSinglePrayer: View {
     @State private var inputText: String = ""
     @State private var selection: TextSelection? = nil
     @State private var wordCount: Int = 0
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) var modelContext
 
     var body: some View {
         VStack {
-//            Text("Prayer Data")
             ZStack(alignment: .topTrailing) {
                 VStack {
                     TextEditor(text: $inputText)
                         .font(.body)
-                        .padding()
-                        .padding(.top, 20)
+                        .padding(.horizontal)
+                        .padding(.top, 50)
                         .onChange(of: inputText) { value in
-                            
+                            wordCount = inputText.count
                         }
                         .background(Color(.systemGray6))
                 }
@@ -32,28 +33,46 @@ struct AddCustomSinglePrayer: View {
                 HStack {
                     Text("Enter your prayer")
                         .font(.headline)
-                        .foregroundColor(.secondary)
-                        .padding(.trailing)
                     Spacer()
                     Text("\(wordCount) words")
                         .font(.headline)
-                        .foregroundColor(.secondary)
-                        .padding(.trailing)
-                }
+                }.padding(.top, 20)
+                    .padding(.horizontal)
             }
         }
             .toolbar {
                 ToolbarItem(
                     
                     placement: ToolbarItemPlacement.topBarLeading) {
-                        Text(prayerTitle)
+                        HStack {
+                            Text(prayerTitle)
+                        }
                     }
                 
                 ToolbarItem(
                     placement: ToolbarItemPlacement.topBarTrailing) {
                         Button("Done") {
+                            withAnimation {
+                                
+                                do {
+                                    
+                                    let prayerToSave = PrayerSwiftDataItem(
+                                        name: prayerTitle,
+                                        data: inputText,
+                                        orderIndex: 0
+                                    )
+                                    
+                                    modelContext.insert(prayerToSave)
+                                    
+                                    try modelContext.save()
+                                    dismiss()
+                                    
+                                } catch {
+                                    print("Error saving single prayer \(error)")
+                                }
+                            }
                             
-                        }
+                        }.disabled(inputText.count == 0)
                     }
             }
         
@@ -63,36 +82,7 @@ struct AddCustomSinglePrayer: View {
 }
 
 #Preview {
-    AddCustomSinglePrayer(prayerTitle: "Single prayer")
-}
-
-#Preview {
-    TextE()
-}
-
-struct TextE: View {
-
-    @State private var inputText: String = ""
-
-    var body: some View {
-        VStack {
-            //Text("Prayer Data")
-            TextEditor(text: $inputText)
-                .font(.body)
-                .padding()
-                //.padding(.top, 20)
-                .onChange(of: inputText) { value in
-                    
-                }
-                .background(Color(.systemGray6))
-        }.toolbar {
-            ToolbarItem(
-                placement: ToolbarItemPlacement.topBarTrailing) {
-                    Button("Done") {
-                        
-                    }
-                }
-        }
-
+    NavigationView {
+        AddCustomSinglePrayer(prayerTitle: "Single prayer")
     }
 }

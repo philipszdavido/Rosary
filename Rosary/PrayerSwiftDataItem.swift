@@ -28,6 +28,17 @@ class PrayerSwiftDataItem {
         self.orderIndex = orderIndex
         self.customPrayer = customPrayer
     }
+    
+    init(
+        name: String,
+        data: String,
+        orderIndex: Int
+    ) {
+        self.id = UUID()
+        self.name = name
+        self.data = data
+        self.orderIndex = orderIndex
+    }
 }
 
 @Model
