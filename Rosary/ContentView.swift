@@ -56,8 +56,17 @@ struct ContentView: View {
     }
 }
 
+struct ContentView_Preview: View {
+    
+    @StateObject var settings = GlobalSettings()
+    
+    var body: some View {
+        ContentView()
+            .modelContainer(for: PrayerSwiftDataItem.self, inMemory: true)
+            .environmentObject(settings)
+            .preferredColorScheme(settings.theme == .dark ? .dark : .light)
+    }
+}
 #Preview {
-    ContentView()
-        .modelContainer(for: PrayerSwiftDataItem.self, inMemory: true)
-        .environmentObject(GlobalSettings())
+    ContentView_Preview()
 }

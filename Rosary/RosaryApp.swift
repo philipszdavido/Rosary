@@ -23,7 +23,7 @@ struct RosaryApp: App {
         }
     }()
     
-    let settings = GlobalSettings()
+    @StateObject var settings = GlobalSettings()
 
     var body: some Scene {
         WindowGroup {

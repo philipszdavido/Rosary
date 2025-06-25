@@ -101,8 +101,10 @@ struct SettingsView: View {
 }
 
 struct SettingsView_Preview: View {    
+
+    @StateObject var globalSettings = GlobalSettings()
+
     var body: some View {
-        var globalSettings = GlobalSettings()
         SettingsView()
             .environmentObject(globalSettings)
             .preferredColorScheme(globalSettings.theme == .dark ? .dark : .light)
