@@ -68,7 +68,7 @@ struct AddPrayerName: View {
             NavigationLink {
                 
                 if prayerType == .series {
-                    AddCustomPrayer(prayerTitle: text)
+                    AddCustomSeriesPrayer(prayerTitle: text)
                 }
                 
                 if prayerType == .single {
