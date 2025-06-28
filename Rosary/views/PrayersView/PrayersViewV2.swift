@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct PrayersViewV2: View {
     
-    @State var prayers = PrayerData.prayers;
+    @State var prayers: [Prayer] = []
     @State var rosary: Prayer = Prayer(
         name: "Rosary",
         type: PrayerEnum.rosary,
@@ -17,6 +18,8 @@ struct PrayersViewV2: View {
     )
     
     @State var quickPrayers = PrayerData.quickPrayers as [Prayer];
+    @Query(filter: #Predicate<PrayerSwiftDataItem> { $0.customPrayer == nil }) var customPrayers: [PrayerSwiftDataItem]
+    @Query var customSeriesPrayers: [CustomPrayer]
         
     var body: some View {
         NavigationStack {
@@ -39,11 +42,15 @@ struct PrayersViewV2: View {
                 // Rosary Navigation Card
                 RosaryNavigationCard(rosary: $rosary)
                 
+                // if customPrayers.count > 0 {
+                    // CustomPrayers(customPrayers: customPrayers)
+                // }
+                
                 // Horizontal ScrollView Section
                 HorizontalScrollViewSection(quickPrayers: $quickPrayers)
                 
                 // List of prayers
-                Section {
+                Section("All Prayers") {
                     ForEach($prayers) { $prayer in
                         NavigationLink {
                             switch prayer.type {
@@ -70,7 +77,16 @@ struct PrayersViewV2: View {
                 }
             }
             .listStyle(.plain)
+        }.onAppear {
+            _init()
         }
+    }
+    
+    func _init() {
+        
+        prayers = PrayerData.prayers +
+                  customSeriesPrayers.map { Prayer(from: $0) } +
+                  customPrayers.map { Prayer(from: $0) }
     }
 
     func addItem() {
@@ -85,17 +101,39 @@ struct PrayersViewV2: View {
 
 #Preview {
     NavigationStack {
-        PrayersViewV2()
-    }
+        TabView(selection: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Selection@*/.constant(1)/*@END_MENU_TOKEN@*/) {
+            PrayersViewV2().tabItem { Text("Prayers") }.tag(1)
+            AddCustomPrayerView().tabItem { Text("Add Custom Prayer") }.tag(2)
+        }
+    }.modelContainer(
+        for: [PrayerSwiftDataItem.self, CustomPrayer.self],
+        inMemory: true
+    ).environmentObject(GlobalSettings())
 }
 
+#Preview {
+    PrayersViewV2()
+}
+
+struct CustomPrayers: View {
+    
+    public var customPrayers: [PrayerSwiftDataItem]
+    
+    var body: some View {
+        Section("Custom Prayers") {
+            ForEach(customPrayers) { prayer in
+                Text(prayer.name)
+            }
+        }
+    }
+}
 
 struct HorizontalScrollViewSection: View {
 
     @Binding var quickPrayers: [Prayer]
 
     var body: some View {
-        Section {
+        Section("Quick Prayers") {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach($quickPrayers) { $quickPrayer in
@@ -126,12 +164,13 @@ struct HorizontalScrollViewSection: View {
                         }
                     }
                 }
-                .padding(.horizontal)
+                //.padding(.horizontal)
             }
         }
         .listRowInsets(EdgeInsets())
         .listRowSeparator(.hidden)
-        .padding(.top, 20)
+        //.padding(.top, 20)
+        .padding(.horizontal)
     }
 }
 

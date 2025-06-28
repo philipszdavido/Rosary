@@ -66,7 +66,7 @@ struct RosarySimpleDecadeView: View {
                                 //)
                                 onBeadTap(index, beadIndex)
                             }
-                        )
+                        ).disabled(currentBeadIndex > beadIndex)
                         
                     } else {
 
@@ -78,13 +78,14 @@ struct RosarySimpleDecadeView: View {
                             onTap: {
                                 onBeadTap(index, beadIndex)
                             }
-                        )
+                        ).disabled(currentBeadIndex > beadIndex)
                         
                     }
                 }
             }
         }
         .padding(.horizontal)
+        
     }
 }
 
@@ -111,6 +112,7 @@ struct RosarySimpleDecadeView_Preview: View {
 
 #Preview {
     RosarySimpleDecadeView_Preview()
+        .environmentObject(GlobalSettings())
 }
 
 

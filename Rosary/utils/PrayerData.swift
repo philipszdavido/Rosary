@@ -6,8 +6,32 @@
 //
 
 import Foundation
+import SwiftData
 
 class PrayerData {
+        
+    static func loadPrayers(using context: ModelContext) -> [Prayer] {
+        
+        var prayers = PrayerData.prayers + RosaryMystery.all()
+        
+        do {
+            let descriptor = FetchDescriptor<PrayerSwiftDataItem>(
+                predicate: #Predicate { $0.customPrayer != nil },
+                sortBy: [SortDescriptor(\.orderIndex)]
+            )
+            
+            let allPrayers = try context.fetch(descriptor)
+            
+            prayers += allPrayers.map({ PrayerSwiftDataItem in
+                Prayer(from: PrayerSwiftDataItem)
+            })
+
+        } catch {
+            print("Error fetching prayers: \(error)")
+        }
+        
+        return prayers
+    }
     
     static let prayers = [
         Prayer(
@@ -79,21 +103,21 @@ class PrayerData {
     static func gloryBePrayer(_ type: PrayerEnum = .single) -> Prayer {
         return PrayerData.constructPrayer(gloryBe, name: "Glory Be", type: type)
     }
-
+    
     static let _signOfTheCross = """
     In the name
     """
-
+    
     static let signOfTheCross = """
     In the name of the Father,
     and of the Son,
     and of the Holy Spirit. Amen.
     """
-
+    
     static let _ourFather = """
     Our Father,
     """
-
+    
     static let ourFather = """
     Our Father,
     Who art in heaven,
@@ -106,7 +130,7 @@ class PrayerData {
     and lead us not into temptation,
     but deliver us from evil. Amen.
     """
-
+    
     static let _hailMary = """
     Hail Mary
     """
@@ -119,7 +143,7 @@ class PrayerData {
     pray for us sinners,
     now and at the hour of our death. Amen.
     """
-
+    
     static let _gloryBe = """
     Glory
     """
@@ -132,11 +156,11 @@ class PrayerData {
     is now, and ever shall be,
     world without end. Amen.
     """
-
+    
     static let _apostlesCreed = """
     I believe
     """
-
+    
     static let apostlesCreed = """
     I believe in God,
     the Father Almighty,
@@ -308,7 +332,7 @@ class PrayerData {
     do we come in our tribulation,
     and having implored the help of your most holy Spouse,
     we confidently invoke your patronage also.
-
+    
     Through that charity which bound you
     to the Immaculate Virgin Mother of God
     and through the paternal love
@@ -316,7 +340,7 @@ class PrayerData {
     we humbly beg you graciously to regard the inheritance
     which Jesus Christ has purchased by his Blood,
     and with your power and strength to aid us in our necessities.
-
+    
     O most watchful guardian of the Holy Family,
     defend the chosen children of Jesus Christ;
     O most loving father, ward off from us
@@ -324,7 +348,7 @@ class PrayerData {
     O our most mighty protector, be kind to us
     and from heaven assist us in our struggle
     with the power of darkness.
-
+    
     As once you rescued the Child Jesus from deadly peril,
     so now protect God's Holy Church
     from the snares of the enemy and from all adversity;
@@ -332,7 +356,7 @@ class PrayerData {
     so that, supported by your example and your aid,
     we may be able to live piously, to die in holiness,
     and to obtain eternal happiness in heaven.
-
+    
     Amen.
     """
     

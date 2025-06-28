@@ -47,6 +47,7 @@ class CustomPrayer {
     var name: String
     var orderIndex: Int
     var prayerSwiftDataItems: [PrayerSwiftDataItem]
+    var isRosary: Bool = false
 
     init(
         name: String,

@@ -13,6 +13,7 @@ struct RosaryApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             PrayerSwiftDataItem.self,
+            CustomPrayer.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

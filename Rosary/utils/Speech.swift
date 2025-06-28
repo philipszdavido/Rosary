@@ -63,6 +63,8 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
         spokenWord = ""
         
         let text = prayerQueue[currentPrayerIndex].data
+        configureAudioSession()
+
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(identifier: voice)
         utterance.rate = 0.45  // Adjust for better word highlighting timing
@@ -225,7 +227,7 @@ class RosarySpeaker: PrayerSpeaker {
         let currentPrayer = prayerQueue[prayerIndex]
         
         if currentPrayer.type == .bead {
-            
+            print(prayerIndex, self.previousCurrentPrayerIndex)
             if prayerIndex <= 0 {
                 bead = -1
                 return

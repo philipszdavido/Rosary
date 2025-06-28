@@ -14,12 +14,12 @@ enum RosaryType: Int {
 }
 
 struct Prayer: Identifiable, Hashable, Codable {
-    let id: Int
+    let id: UUID
     let name: String
     let type: PrayerEnum
     let data: String
 
-    init(id: Int = UUID().hashValue, name: String, type: PrayerEnum, data: String) {
+    init(id: UUID = UUID(), name: String, type: PrayerEnum, data: String) {
         self.id = id
         self.name = name
         self.type = type

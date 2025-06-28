@@ -12,7 +12,7 @@ struct RosaryHeader: View {
     @Environment(\.dismiss) var dismiss
     public var prayer: Prayer
     public var rosaryType: RosaryType
-    public var speaker: RosarySpeaker;
+    @ObservedObject public var speaker: RosarySpeaker;
 
     var title: String {
         return "\(prayer.name) - \(RosaryMystery.today())"

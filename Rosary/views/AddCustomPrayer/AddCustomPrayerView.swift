@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AddCustomPrayerView: View {
     
@@ -26,8 +27,14 @@ struct AddCustomPrayerView: View {
                 } label: {
                     Text("Series Prayer")
                 }
-                
-            }
+
+                NavigationLink {
+                    AddPrayerName(prayerType: PrayerEnum.rosary)
+                } label: {
+                    Text("Rosary Prayer")
+                }
+
+            }.navigationTitle("Add custom prayer")
         }
     }
 }
@@ -68,9 +75,18 @@ struct AddPrayerName: View {
             NavigationLink {
                 
                 if prayerType == .series {
-                    AddCustomSeriesPrayer(prayerTitle: text)
+                    AddCustomSeriesPrayer(prayerTitle: text, onSave: { ctx, p in
+                        save(modelContext: ctx, prayerTitle: text, prayers: p)
+                    })
+                        .navigationBarBackButtonHidden(true)
                 }
-                
+
+                if prayerType == .rosary {
+                    
+                    AddCustomRosary(prayerTitle: text)
+                        .navigationBarBackButtonHidden(true)
+                }
+
                 if prayerType == .single {
                     AddCustomSinglePrayer(prayerTitle: text)
                 }
@@ -85,5 +101,34 @@ struct AddPrayerName: View {
             
         }
     }
+    
+    func save(
+        modelContext: ModelContext,
+        prayerTitle: String,
+        prayers: [Prayer]
+    ) {
+        
+        let customPrayer = CustomPrayer(
+            name: prayerTitle,
+            orderIndex: 0,
+            prayerSwiftDataItems: []
+        )
+        
+        for prayer in prayers {
+            let prayer = PrayerSwiftDataItem(
+                name: prayer.name,
+                data: prayer.data,
+                orderIndex: 0,
+                customPrayer: customPrayer
+            )
+            
+            modelContext.insert(prayer)
+        }
+
+        modelContext.insert(customPrayer)
+
+    }
+
         
 }
+
