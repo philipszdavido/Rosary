@@ -83,7 +83,7 @@ struct AddPrayerName: View {
 
                 if prayerType == .rosary {
                     
-                    AddCustomRosary(prayerTitle: text)
+                    AddCustomRosaryV2(prayerTitle: text)
                         .navigationBarBackButtonHidden(true)
                 }
 

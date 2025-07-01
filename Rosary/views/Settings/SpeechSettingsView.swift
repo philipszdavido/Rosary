@@ -41,25 +41,51 @@ struct ListOfVoices: View {
     
     @EnvironmentObject var settings: GlobalSettings
     let voices = AVSpeechSynthesisVoice.speechVoices()
+    var speaker = PrayerSpeaker()
 
     var body: some View {
         List {
             ForEach(voices, id: \.self) { voice in
                 HStack {
-                                        
-                    Text(voice.name)
-                    Text("(\(voice.language))")
-                    if settings.voice == voice.identifier {
-                        Image(systemName: "checkmark")
-                            .foregroundColor(.green)
+                    HStack {
+                        
+                        Text(voice.name)
+                        Text("(\(voice.language))")
+                        
+                        Spacer()
+                        if settings.voice == voice.identifier {
+                            Image(systemName: "checkmark.circle")
+                                .foregroundColor(.green)
+                        }
+                        Text(voice.quality == .enhanced ? "Enhanced" : "Default")
+                        
+                    }
+                    .onTapGesture {
+                        settings.voice = voice.identifier
+                        // print(">>> Set voice to '%s'\n", voice.identifier)
+                    }
+                    .padding(10)
+                    
+                    Button {
+                        
+                        speaker.speakAloud = true;
+                        speaker.voice = voice.identifier
+                        speaker.speak(
+                            prayers: [
+                                Prayer(
+                                    name: "Test",
+                                    type: PrayerEnum.single,
+                                    data: "Hello, this is " + voice.name
+                                )
+                            ],
+                            auto: false
+                        )
+                        
+                    } label: {
+                        Image(systemName: "speaker.wave.3.fill")
                     }
 
-                    Spacer()
-                    Text(voice.quality == .enhanced ? "Enhanced" : "Default")
-                }.onTapGesture {
-                    settings.voice = voice.identifier
-                    print(">>> Set voice to '%s'\n", voice.identifier)
-                }.padding(10)
+                }
             }
         }.navigationTitle("Voices")
     }
@@ -77,6 +103,14 @@ struct ListOfVoices: View {
             """)
         }
     }
+}
+
+#Preview {
+    NavigationView {
+        
+        ListOfVoices()
+    }
+        .environmentObject(GlobalSettings())
 }
 
 #Preview {

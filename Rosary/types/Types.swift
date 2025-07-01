@@ -15,9 +15,9 @@ enum RosaryType: Int {
 
 struct Prayer: Identifiable, Hashable, Codable {
     let id: UUID
-    let name: String
-    let type: PrayerEnum
-    let data: String
+    var name: String
+    var type: PrayerEnum
+    var data: String
 
     init(id: UUID = UUID(), name: String, type: PrayerEnum, data: String) {
         self.id = id

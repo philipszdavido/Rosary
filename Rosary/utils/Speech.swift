@@ -224,6 +224,8 @@ class RosarySpeaker: PrayerSpeaker {
     
     override func setBeadOptions(prayerIndex: Int) {
         
+        guard prayerIndex < prayerQueue.count else { return }
+        
         let currentPrayer = prayerQueue[prayerIndex]
         
         if currentPrayer.type == .bead {
