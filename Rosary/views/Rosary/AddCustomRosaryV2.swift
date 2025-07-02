@@ -452,6 +452,8 @@ struct SaveButtonToolBar: View {
     @Binding var sections: [PrayerSection]
     @Binding var title: String;
     
+    @State var uuid: UUID?
+    
     var body: some View {
         Button {
             save()
@@ -463,18 +465,36 @@ struct SaveButtonToolBar: View {
     func save() {
         
         do {
-            var customPrayer = CustomPrayer(
-                name: title,
-                orderIndex: 0,
-                prayerSwiftDataItems: []
-            )
-            customPrayer.isRosary = true
+            // Check if a CustomPrayer with the same id already exists
+            let existing = try modelContext.fetch(
+                FetchDescriptor<CustomPrayer>(
+                    predicate: #Predicate { $0.id == uuid! }
+                )
+            ).first
 
+            let customPrayer: CustomPrayer
+
+            if let found = existing {
+                // Update the existing CustomPrayer
+                customPrayer = found
+                customPrayer.prayerSwiftDataItems.removeAll()
+            } else {
+                // Create a new one
+                customPrayer = CustomPrayer(
+                    name: title,
+                    orderIndex: 0,
+                    prayerSwiftDataItems: []
+                )
+                customPrayer.isRosary = true
+                modelContext.insert(customPrayer)
+            }
+
+            // Build prayers
             var prayers: [PrayerSwiftDataItem] = []
-            
+
             for section in sections {
                 for prayer in section.prayers {
-                    prayers +=  [
+                    prayers.append(
                         PrayerSwiftDataItem(
                             name: prayer.name,
                             data: prayer.data,
@@ -482,18 +502,18 @@ struct SaveButtonToolBar: View {
                             type: prayer.type,
                             customPrayer: customPrayer
                         )
-                    ]
+                    )
                 }
             }
-            customPrayer.prayerSwiftDataItems = prayers
 
-            modelContext.insert(customPrayer)
+            customPrayer.prayerSwiftDataItems = prayers
+            uuid = customPrayer.id
+
             try modelContext.save()
-            
+
         } catch {
-            print(error)
+            print("Save failed: \(error)")
         }
-        
     }
 
 }

@@ -18,23 +18,30 @@ struct AddCustomPrayerView: View {
                 
                 NavigationLink {
                     AddPrayerName(prayerType: PrayerEnum.single)
+                        .toolbar(.hidden, for: .tabBar)
+
                 } label: {
                     Text("Single Prayer")
                 }
                 
                 NavigationLink {
                     AddPrayerName(prayerType: PrayerEnum.series)
+                        .toolbar(.hidden, for: .tabBar)
+
                 } label: {
                     Text("Series Prayer")
                 }
 
                 NavigationLink {
                     AddPrayerName(prayerType: PrayerEnum.rosary)
+                        .toolbar(.hidden, for: .tabBar)
+
                 } label: {
                     Text("Rosary Prayer")
                 }
 
-            }.navigationTitle("Add custom prayer")
+            }
+            .navigationTitle("Add custom prayer")
         }
     }
 }
@@ -107,28 +114,39 @@ struct AddPrayerName: View {
         prayerTitle: String,
         prayers: [Prayer]
     ) {
-        
-        let customPrayer = CustomPrayer(
-            name: prayerTitle,
-            orderIndex: 0,
-            prayerSwiftDataItems: []
-        )
-        
-        for prayer in prayers {
-            let prayer = PrayerSwiftDataItem(
-                name: prayer.name,
-                data: prayer.data,
+        do {
+            
+            let customPrayer = CustomPrayer(
+                name: prayerTitle,
                 orderIndex: 0,
-                customPrayer: customPrayer
+                prayerSwiftDataItems: []
             )
             
-            modelContext.insert(prayer)
+            var _prayers: [PrayerSwiftDataItem] = []
+            
+            for _prayer in prayers {
+                let prayer = PrayerSwiftDataItem(
+                    name: _prayer.name,
+                    data: _prayer.data,
+                    orderIndex: 0,
+                    customPrayer: customPrayer
+                )
+                prayer.id = _prayer.id
+                
+                _prayers += [prayer]
+                
+                // modelContext.insert(prayer)
+            }
+            customPrayer.prayerSwiftDataItems = _prayers
+            
+            modelContext.insert(customPrayer)
+            
+            try modelContext.save()
+            
+        } catch {
+            print(error)
         }
-
-        modelContext.insert(customPrayer)
-
     }
-
         
 }
 

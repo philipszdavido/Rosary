@@ -34,7 +34,7 @@ struct RosaryView: View {
         ScrollView {
             
             if settings.showBeadCounting {
-                Text("\(prayerSequence.count)")
+
                 RosarySimpleDecadeView(
                     currentBeadIndex: $speaker.bead,
                     prayerSequence: prayerSequence,

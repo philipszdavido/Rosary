@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AddCustomSinglePrayer: View {
     
@@ -15,6 +16,8 @@ struct AddCustomSinglePrayer: View {
     @State private var wordCount: Int = 0
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) var modelContext
+    
+    @State private var uuid: UUID?
 
     var body: some View {
         VStack {
@@ -51,28 +54,47 @@ struct AddCustomSinglePrayer: View {
                 
                 ToolbarItem(
                     placement: ToolbarItemPlacement.topBarTrailing) {
+                        
                         Button("Done") {
-                            withAnimation {
-                                
-                                do {
-                                    
-                                    let prayerToSave = PrayerSwiftDataItem(
-                                        name: prayerTitle,
-                                        data: inputText,
-                                        orderIndex: 0
-                                    )
-                                    
-                                    modelContext.insert(prayerToSave)
-                                    
-                                    try modelContext.save()
-                                    dismiss()
-                                    
-                                } catch {
-                                    print("Error saving single prayer \(error)")
-                                }
+                            guard !prayerTitle.trimmingCharacters(in: .whitespaces).isEmpty,
+                                  !inputText.trimmingCharacters(in: .whitespaces).isEmpty else {
+                                print("Title or data is empty")
+                                return
                             }
-                            
+
+                            do {
+                                
+                                let existing = try modelContext.fetch(
+                                    FetchDescriptor<PrayerSwiftDataItem>(
+                                        predicate: #Predicate { $0.id == uuid! }
+                                    )
+                                )
+
+                                guard existing.isEmpty else {
+                                    print("Prayer with title already exists")
+                                    return
+                                }
+
+                                let prayerToSave = PrayerSwiftDataItem(
+                                    name: prayerTitle,
+                                    data: inputText,
+                                    orderIndex: 0
+                                )
+                                
+                                uuid = prayerToSave.id
+                                
+                                modelContext.insert(prayerToSave)
+                                try modelContext.save()
+
+                                withAnimation {
+                                    dismiss()
+                                }
+
+                            } catch {
+                                print("❌ Error saving single prayer: \(error.localizedDescription)")
+                            }
                         }.disabled(inputText.count == 0)
+                        
                     }
             }
         

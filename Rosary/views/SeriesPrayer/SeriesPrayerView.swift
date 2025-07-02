@@ -39,7 +39,8 @@ struct SeriesPrayerView: View {
         VStack {
 
             ScrollView {
-                ForEach(Array(prayerSequence.enumerated()), id: \.element.id) {
+                ForEach(Array(PrayerData
+                    .loadPrayersWithId(using: modelContext, prayer: prayer).enumerated()), id: \.element.id) {
                     index, prayer in
                     PrayerListItem(
                         prayer: prayer,
@@ -91,13 +92,17 @@ struct SeriesPrayerView: View {
         }
         .onAppear {
             
-//            save(
+//            PrayerData.save(
 //                modelContext: modelContext,
 //                prayerTitle: "Hello",
-//                prayers: PrayerData.prayers
+//                prayers: PrayerData.prayers,
+//                prayer: prayer
 //            )
 
-            loadPrayers(using: modelContext, prayer: prayer)
+            //prayerSequence = PrayerData
+                //.loadPrayersWithId(using: modelContext, prayer: prayer)
+            
+            print(prayerSequence)
                         
             speaker.voice = settings.voice
             
@@ -107,68 +112,6 @@ struct SeriesPrayerView: View {
 
     }
     
-    func save(
-        modelContext: ModelContext,
-        prayerTitle: String,
-        prayers: [Prayer]
-    ) {
-        
-        var items: [PrayerSwiftDataItem] = []
-        
-        do {
-            
-            let customPrayer = CustomPrayer(
-                name: prayerTitle,
-                orderIndex: 0,
-                prayerSwiftDataItems: []
-            )
-            
-            customPrayer.id = prayer.id
-            
-            for currentPrayer in prayers {
-                let _prayer = PrayerSwiftDataItem(
-                    name: currentPrayer.name,
-                    data: currentPrayer.data,
-                    orderIndex: 0,
-                    customPrayer: customPrayer
-                )
-                
-                items += [_prayer]
-                
-            }
-            modelContext.insert(customPrayer)
-            
-            try modelContext.save()
-            
-        } catch {}
-
-    }
-    
-    func loadPrayers(using context: ModelContext, prayer: Prayer) {
-                
-        do {
-            
-            let descriptor = FetchDescriptor<CustomPrayer>(
-                predicate: #Predicate { $0.id == prayer.id },
-                sortBy: [SortDescriptor(\.orderIndex)]
-            )
-            
-            let allPrayers = try context.fetch(descriptor)
-            
-            guard let foundPrayer = allPrayers.first else { return }
-            
-            prayerSequence = foundPrayer.prayerSwiftDataItems
-                .map { PrayerSwiftDataItem in
-                Prayer(from: PrayerSwiftDataItem)
-            }
-            
-        } catch {
-            print("Error fetching prayers: \(error)")
-        }
-        
-    }
-
-        
 }
 
 struct PrayerListItem: View {

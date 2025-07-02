@@ -33,6 +33,74 @@ class PrayerData {
         return prayers
     }
     
+    static func save(
+        modelContext: ModelContext,
+        prayerTitle: String,
+        prayers: [Prayer],
+        prayer: Prayer
+    ) {
+        
+        var items: [PrayerSwiftDataItem] = []
+        
+        do {
+            
+            let customPrayer = CustomPrayer(
+                name: prayerTitle,
+                orderIndex: 0,
+                prayerSwiftDataItems: []
+            )
+            
+            customPrayer.id = prayer.id
+            
+            for currentPrayer in prayers {
+                let _prayer = PrayerSwiftDataItem(
+                    name: currentPrayer.name,
+                    data: currentPrayer.data,
+                    orderIndex: 0,
+                    customPrayer: customPrayer
+                )
+                _prayer.id = currentPrayer.id
+                
+                items += [_prayer]
+                
+            }
+            customPrayer.prayerSwiftDataItems = items
+            modelContext.insert(customPrayer)
+            
+            try modelContext.save()
+            
+        } catch {}
+
+    }
+    
+    static func loadPrayersWithId(using context: ModelContext, prayer: Prayer) -> [Prayer] {
+                
+        var prayers: [Prayer] = []
+        
+        do {
+            
+            let descriptor = FetchDescriptor<CustomPrayer>(
+                predicate: #Predicate { $0.id == prayer.id },
+                sortBy: [SortDescriptor(\.orderIndex)]
+            )
+            
+            let allPrayers = try context.fetch(descriptor)
+            
+            guard let foundPrayer = allPrayers.first else { return [] }
+
+            prayers = foundPrayer.prayerSwiftDataItems
+                .map { PrayerSwiftDataItem in
+                Prayer(from: PrayerSwiftDataItem)
+            }
+            
+        } catch {
+            print("Error fetching prayers: \(error)")
+        }
+        
+        return prayers
+        
+    }
+    
     static let prayers = [
         Prayer(
             name: "Our Father",

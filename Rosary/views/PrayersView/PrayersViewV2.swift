@@ -97,8 +97,13 @@ struct PrayersViewV2: View {
 #Preview {
     NavigationStack {
         TabView(selection: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Selection@*/.constant(1)/*@END_MENU_TOKEN@*/) {
-            PrayersViewV2().tabItem { Text("Prayers") }.tag(1)
-            AddCustomPrayerView().tabItem { Text("Add Custom Prayer") }.tag(2)
+            PrayersViewV2().tabItem {
+                Image(systemName: "hands.and.sparkles")
+                Text("Prayers") }.tag(1)
+            AddCustomPrayerView().tabItem {
+                Image(systemName: "plus.app")
+                Text("Add Custom Prayer")
+            }.tag(2)
         }
     }.modelContainer(
         for: [PrayerSwiftDataItem.self, CustomPrayer.self],
