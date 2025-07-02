@@ -10,40 +10,44 @@ import SwiftData
 
 @Model
 class PrayerSwiftDataItem {
-    var id: UUID
+    var id: UUID = UUID()
     var name: String
     var data: String
     var orderIndex: Int
+    var type: PrayerEnum
     var customPrayer: CustomPrayer?
 
     init(
         name: String,
         data: String,
         orderIndex: Int,
+        type: PrayerEnum = .single,
         customPrayer: CustomPrayer
     ) {
-        self.id = UUID()
         self.name = name
         self.data = data
         self.orderIndex = orderIndex
         self.customPrayer = customPrayer
+        self.type = type
     }
-    
+        
     init(
         name: String,
         data: String,
-        orderIndex: Int
+        orderIndex: Int,
+        type: PrayerEnum = .single
     ) {
-        self.id = UUID()
         self.name = name
         self.data = data
         self.orderIndex = orderIndex
+        self.type = type
     }
+
 }
 
 @Model
 class CustomPrayer {
-    var id: UUID
+    var id: UUID = UUID()
     var name: String
     var orderIndex: Int
     var prayerSwiftDataItems: [PrayerSwiftDataItem]
@@ -54,7 +58,6 @@ class CustomPrayer {
         orderIndex: Int,
         prayerSwiftDataItems: [PrayerSwiftDataItem]
     ) {
-        self.id = UUID()
         self.name = name
         self.orderIndex = orderIndex
         self.prayerSwiftDataItems = prayerSwiftDataItems

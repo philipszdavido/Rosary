@@ -60,10 +60,6 @@ struct RosarySimpleDecadeView: View {
                             isCompleted: beadIndex < currentBeadIndex,
                             isActive: beadIndex == currentBeadIndex,
                             onTap: {
-                                //print(
-                                //    beadIndex,
-                                 //   getBeadIndex(id: index, prayer: prayer)
-                                //)
                                 onBeadTap(index, beadIndex)
                             }
                         ).disabled(currentBeadIndex > beadIndex)

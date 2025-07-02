@@ -12,13 +12,13 @@ extension Prayer {
         self.name = custom.name
         self.type = custom.isRosary ? .rosary : .series
         self.data = ""
-        self.id = custom.id // UUID().hashValue
+        self.id = custom.id
     }
     
     init(from dataItem: PrayerSwiftDataItem) {
         self.name = dataItem.name
-        self.type = .single
+        self.type = dataItem.type
         self.data = dataItem.data
-        self.id = dataItem.id // UUID().hashValue
+        self.id = dataItem.id
     }
 }

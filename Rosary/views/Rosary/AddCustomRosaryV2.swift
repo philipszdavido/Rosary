@@ -468,7 +468,8 @@ struct SaveButtonToolBar: View {
                 orderIndex: 0,
                 prayerSwiftDataItems: []
             )
-            
+            customPrayer.isRosary = true
+
             var prayers: [PrayerSwiftDataItem] = []
             
             for section in sections {
@@ -478,14 +479,14 @@ struct SaveButtonToolBar: View {
                             name: prayer.name,
                             data: prayer.data,
                             orderIndex: 0,
+                            type: prayer.type,
                             customPrayer: customPrayer
                         )
                     ]
                 }
             }
-            
-            customPrayer.isRosary = true
-            
+            customPrayer.prayerSwiftDataItems = prayers
+
             modelContext.insert(customPrayer)
             try modelContext.save()
             

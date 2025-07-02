@@ -41,11 +41,7 @@ struct PrayersViewV2: View {
                 
                 // Rosary Navigation Card
                 RosaryNavigationCard(rosary: $rosary)
-                
-                // if customPrayers.count > 0 {
-                    // CustomPrayers(customPrayers: customPrayers)
-                // }
-                
+                                
                 // Horizontal ScrollView Section
                 HorizontalScrollViewSection(quickPrayers: $quickPrayers)
                 
@@ -55,7 +51,7 @@ struct PrayersViewV2: View {
                         NavigationLink {
                             switch prayer.type {
                             case .rosary:
-                                RosaryView(prayer: $prayer)
+                                RosaryView2(prayer: $prayer)
                                     .toolbar(.hidden, for: .tabBar)
                                     .navigationBarBackButtonHidden(true)
                             case .single:
@@ -84,9 +80,8 @@ struct PrayersViewV2: View {
     
     func _init() {
         
-        prayers = PrayerData.prayers +
-                  customSeriesPrayers.map { Prayer(from: $0) } +
-                  customPrayers.map { Prayer(from: $0) }
+        prayers = customSeriesPrayers.map { Prayer(from: $0) } +
+                  customPrayers.map { Prayer(from: $0) } + PrayerData.prayers
     }
 
     func addItem() {
@@ -164,12 +159,10 @@ struct HorizontalScrollViewSection: View {
                         }
                     }
                 }
-                //.padding(.horizontal)
             }
         }
         .listRowInsets(EdgeInsets())
         .listRowSeparator(.hidden)
-        //.padding(.top, 20)
         .padding(.horizontal)
     }
 }
