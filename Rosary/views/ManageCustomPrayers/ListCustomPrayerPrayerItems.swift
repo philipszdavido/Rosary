@@ -16,6 +16,8 @@ struct ListCustomPrayerPrayerItems: View {
     @State var show = false
     @State var searchText = ""
     
+    @State var showConfirmActionSheet = false
+    
     var filter: [PrayerSwiftDataItem] {
         if searchText.isEmpty {
             return customPrayer.prayerSwiftDataItems
@@ -75,15 +77,24 @@ struct ListCustomPrayerPrayerItems: View {
                         }
 
                         Button("Delete") {
+                            showConfirmActionSheet.toggle()
                             
-                            PrayerData
-                                .deleteCustomPrayer(
-                                    modelContext: modelContext,
-                                    customPrayer: customPrayer
-                                )
-                            
-                            // modelContext.delete(customPrayer)
-                            
+                        }.actionSheet(isPresented: $showConfirmActionSheet) {
+                            ActionSheet(
+                                title: Text("Hold on"),
+                                message: Text("Do you really want to delete this item?"),
+                                buttons: [
+                                    ActionSheet.Button
+                                        .destructive(Text("Delete"), action: {
+                                        PrayerData
+                                            .deleteCustomPrayer(
+                                                modelContext: modelContext,
+                                                customPrayer: customPrayer
+                                            )
+                                    }),
+                                    ActionSheet.Button.cancel()
+                                ]
+                            )
                         }
                     }
                 }
@@ -100,11 +111,15 @@ struct ListCustomPrayerPrayerItems: View {
 }
 
 #Preview {
-    ListCustomPrayerPrayerItems(
-        customPrayer: CustomPrayer(
-            name: "",
-            orderIndex: 0,
-            prayerSwiftDataItems: []
+    NavigationView {
+        ListCustomPrayerPrayerItems(
+            customPrayer: CustomPrayer(
+                name: "Prayer 1",
+                orderIndex: 0,
+                prayerSwiftDataItems: [
+                    PrayerSwiftDataItem(name: "1", data: "1", orderIndex: 0)
+                ]
+            )
         )
-    )
+    }
 }

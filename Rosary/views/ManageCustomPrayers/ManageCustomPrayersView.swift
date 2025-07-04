@@ -28,16 +28,28 @@ struct ManageCustomPrayersView: View {
         })
     }
     
+    var filterPrayerSwiftDataItems: [PrayerSwiftDataItem] {
+        if searchText.isEmpty {
+            return prayerSwiftDataItems
+        }
+        return prayerSwiftDataItems.filter({ prayerSwiftDataItem in
+            prayerSwiftDataItem.name
+                .lowercased()
+                .contains(searchText.lowercased())
+        })
+    }
+    
     var body: some View {
         NavigationView {
             List {
-                if filter.isEmpty {
-                    EmptyUIView()
-                        .listRowSeparator(.hidden)
-                }
 
                 Section("All Custom Prayers") {
-                    
+
+                    if filter.isEmpty {
+                        EmptyUIView()
+                            .listRowSeparator(.hidden)
+                    }
+
                     ForEach(filter) { customPrayer in
                         NavigationLink {
                             ListCustomPrayerPrayerItems(customPrayer: customPrayer)
@@ -63,12 +75,12 @@ struct ManageCustomPrayersView: View {
                 
                 Section("All Single prayers") {
                     
-                    if prayerSwiftDataItems.isEmpty {
+                    if filterPrayerSwiftDataItems.isEmpty {
                         EmptyUIView()
                             .listRowSeparator(.hidden)
                     }
 
-                    ForEach(prayerSwiftDataItems) { p in
+                    ForEach(filterPrayerSwiftDataItems) { p in
                         VStack(alignment: .leading) {
                             Text(p.name)
                             if let p = p.customPrayer {

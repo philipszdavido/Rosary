@@ -12,18 +12,12 @@ class PrayerData {
     
     static func deleteCustomPrayer(modelContext: ModelContext, customPrayer: CustomPrayer) {
         
-        let prayers = PrayerData
-            .loadPrayersSwiftDataItemWithId(
-                using: modelContext,
-                prayer: Prayer(from: customPrayer)
-            )
-
-        modelContext.delete(customPrayer)
-        
-        for p in prayers {
+        for p in customPrayer.prayerSwiftDataItems {
             modelContext.delete(p)
         }
-        
+
+        modelContext.delete(customPrayer)
+
     }
     
     static func loadPrayers(using context: ModelContext) -> [Prayer] {
