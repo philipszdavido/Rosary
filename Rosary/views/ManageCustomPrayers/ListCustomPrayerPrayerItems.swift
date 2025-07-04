@@ -76,7 +76,13 @@ struct ListCustomPrayerPrayerItems: View {
 
                         Button("Delete") {
                             
-                            modelContext.delete(customPrayer)
+                            PrayerData
+                                .deleteCustomPrayer(
+                                    modelContext: modelContext,
+                                    customPrayer: customPrayer
+                                )
+                            
+                            // modelContext.delete(customPrayer)
                             
                         }
                     }

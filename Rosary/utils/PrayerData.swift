@@ -9,7 +9,23 @@ import Foundation
 import SwiftData
 
 class PrayerData {
+    
+    static func deleteCustomPrayer(modelContext: ModelContext, customPrayer: CustomPrayer) {
         
+        let prayers = PrayerData
+            .loadPrayersSwiftDataItemWithId(
+                using: modelContext,
+                prayer: Prayer(from: customPrayer)
+            )
+
+        modelContext.delete(customPrayer)
+        
+        for p in prayers {
+            modelContext.delete(p)
+        }
+        
+    }
+    
     static func loadPrayers(using context: ModelContext) -> [Prayer] {
         
         var prayers = PrayerData.prayers + RosaryMystery.all()

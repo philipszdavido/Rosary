@@ -31,27 +31,32 @@ struct ManageCustomPrayersView: View {
     var body: some View {
         NavigationView {
             List {
-                
                 if filter.isEmpty {
                     EmptyUIView()
+                        .listRowSeparator(.hidden)
                 }
-                
-                ForEach(filter) { customPrayer in
+
+                Section("All Custom Prayers") {
                     
-                    NavigationLink {
-                        ListCustomPrayerPrayerItems(customPrayer: customPrayer)
-                    } label: {
-                        VStack(alignment: .leading) {
-                            Text(customPrayer.name)
-                            // Text("\(customPrayer.id)")
-                            // Text(customPrayer.isRosary ? " (Rosary)" : "")
+                    ForEach(filter) { customPrayer in
+                        NavigationLink {
+                            ListCustomPrayerPrayerItems(customPrayer: customPrayer)
+                        } label: {
+                            VStack(alignment: .leading) {
+                                Text(customPrayer.name)
+                            }
                         }
+                        .listRowSeparator(.hidden)
                     }
-                    
-                }.onDelete { IndexSet in
-                    withAnimation {
-                        for index in IndexSet {
-                            modelContext.delete(customPrayers[index])
+                    .onDelete { indexSet in
+                        withAnimation {
+                            for index in indexSet {
+                                PrayerData
+                                    .deleteCustomPrayer(
+                                        modelContext: modelContext,
+                                        customPrayer: customPrayers[index]
+                                    )
+                            }
                         }
                     }
                 }
@@ -60,8 +65,9 @@ struct ManageCustomPrayersView: View {
                     
                     if prayerSwiftDataItems.isEmpty {
                         EmptyUIView()
+                            .listRowSeparator(.hidden)
                     }
-                    
+
                     ForEach(prayerSwiftDataItems) { p in
                         VStack(alignment: .leading) {
                             Text(p.name)
@@ -69,13 +75,16 @@ struct ManageCustomPrayersView: View {
                                 Text("\(p.id)")
                             }
                         }
-                    }.onDelete { IndexSet in
-                        for index in IndexSet {
+                        .listRowSeparator(.hidden)
+                    }
+                    .onDelete { indexSet in
+                        for index in indexSet {
                             modelContext.delete(prayerSwiftDataItems[index])
                         }
                     }
                 }
-                
+                .listRowSeparator(.hidden)
+                .listSectionSeparator(.hidden)
             }
             .listStyle(.plain)
             .toolbar {

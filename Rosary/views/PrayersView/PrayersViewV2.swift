@@ -69,7 +69,6 @@ struct PrayersViewV2: View {
                                 .padding(.vertical, 8)
                         }
                     }
-                    .onDelete(perform: deleteItems)
                 }
             }
             .listStyle(.plain)
@@ -82,14 +81,6 @@ struct PrayersViewV2: View {
         
         prayers = customSeriesPrayers.map { Prayer(from: $0) } +
                   customPrayers.map { Prayer(from: $0) } + PrayerData.prayers
-    }
-
-    func addItem() {
-        
-    }
-    
-    func deleteItems(offsets: IndexSet) {
-        
     }
     
 }
