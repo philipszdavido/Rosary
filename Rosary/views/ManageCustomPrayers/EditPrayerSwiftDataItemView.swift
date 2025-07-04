@@ -29,7 +29,8 @@ struct EditPrayerSwiftDataItemView: View {
 
     var body: some View {
         Form {
-            //Section(header: Text("Prayer Info")) {
+            
+            Section(header: Text("Prayer Info")) {
                 TextField("Name", text: $name)
 
                 VStack(alignment: .leading) {
@@ -47,7 +48,7 @@ struct EditPrayerSwiftDataItemView: View {
                         Text(currentCase.displayName).tag(currentCase)
                     }
                 }
-            //}
+            }
 
             Section {
                 Button("Save Changes") {
