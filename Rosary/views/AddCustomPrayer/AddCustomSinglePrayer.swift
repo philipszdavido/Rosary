@@ -20,6 +20,7 @@ struct AddCustomSinglePrayer: View {
     @State private var uuid: UUID?
 
     var body: some View {
+        
         VStack {
             ZStack(alignment: .topTrailing) {
                 VStack {
@@ -43,7 +44,7 @@ struct AddCustomSinglePrayer: View {
                     .padding(.horizontal)
             }
         }
-            .toolbar {
+        .toolbar {
                 ToolbarItem(
                     
                     placement: ToolbarItemPlacement.topBarLeading) {
@@ -97,8 +98,7 @@ struct AddCustomSinglePrayer: View {
                         
                     }
             }
-        
-
+        .toolbar(.hidden, for: .tabBar)
         
     }
 }

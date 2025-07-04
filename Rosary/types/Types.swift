@@ -27,10 +27,23 @@ struct Prayer: Identifiable, Hashable, Codable {
     }
 }
 
-enum PrayerEnum: Int, Codable {
+enum PrayerEnum: Int, Codable, CaseIterable {
     case single = 0
     case rosary = 1
     case series = 3
     case bead = 4
+    
+    static var all: [PrayerEnum] {
+        return [.bead, .rosary, .series, .single]
+    }
+    
+    var displayName: String {
+        switch self {
+        case .single: return "Single Prayer"
+        case .series: return "Series Prayer"
+        case .rosary: return "Rosary"
+        case .bead: return "Bead"
+        }
+    }
 }
 

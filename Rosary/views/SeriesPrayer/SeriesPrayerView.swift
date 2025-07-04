@@ -101,9 +101,7 @@ struct SeriesPrayerView: View {
 
             //prayerSequence = PrayerData
                 //.loadPrayersWithId(using: modelContext, prayer: prayer)
-            
-            print(prayerSequence)
-                        
+                                    
             speaker.voice = settings.voice
             
             speaker.speakAloud = settings.speakAloud

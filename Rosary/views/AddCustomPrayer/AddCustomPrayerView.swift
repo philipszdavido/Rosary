@@ -18,7 +18,6 @@ struct AddCustomPrayerView: View {
                 
                 NavigationLink {
                     AddPrayerName(prayerType: PrayerEnum.single)
-                        .toolbar(.hidden, for: .tabBar)
 
                 } label: {
                     Text("Single Prayer")
@@ -26,7 +25,6 @@ struct AddCustomPrayerView: View {
                 
                 NavigationLink {
                     AddPrayerName(prayerType: PrayerEnum.series)
-                        .toolbar(.hidden, for: .tabBar)
 
                 } label: {
                     Text("Series Prayer")
@@ -34,7 +32,6 @@ struct AddCustomPrayerView: View {
 
                 NavigationLink {
                     AddPrayerName(prayerType: PrayerEnum.rosary)
-                        .toolbar(.hidden, for: .tabBar)
 
                 } label: {
                     Text("Rosary Prayer")
@@ -107,6 +104,7 @@ struct AddPrayerName: View {
             .padding()
             
         }
+
     }
     
     func save(

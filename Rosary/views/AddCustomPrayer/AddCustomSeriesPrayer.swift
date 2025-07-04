@@ -55,7 +55,12 @@ struct AddCustomSeriesPrayer: View {
                 }
             } 
             
-            ListPrayers(prayers: $prayers)
+            ListPrayers(
+                prayers: Binding<[Prayer]>(
+                    get: { filteredPrayers },
+                    set: { prayers = $0 }
+                )
+            )
                 .toolbar {
                     
                     ToolbarItem(
@@ -162,6 +167,7 @@ struct AddCustomSeriesPrayer: View {
             }.padding()
         })
         .searchable(text: $searchText)
+        .toolbar(.hidden, for: .tabBar)
         
     }
     
@@ -250,7 +256,6 @@ struct ListPrayers: View {
     }
     
     func move(from source: IndexSet, to destination: Int) {
-        print(source, destination)
         prayers.move(fromOffsets: source, toOffset: destination)
     }
     

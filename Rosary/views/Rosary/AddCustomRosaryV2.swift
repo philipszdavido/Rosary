@@ -155,6 +155,7 @@ struct AddCustomRosaryV2: View {
             }
 
         }
+        .toolbar(.hidden, for: .tabBar)
     }
     
     func action(

@@ -53,17 +53,19 @@ class PrayerData {
             customPrayer.id = prayer.id
             
             for currentPrayer in prayers {
-                let _prayer = PrayerSwiftDataItem(
+                
+                let newPrayerSwiftDataItem = PrayerSwiftDataItem(
                     name: currentPrayer.name,
                     data: currentPrayer.data,
                     orderIndex: 0,
                     customPrayer: customPrayer
                 )
-                _prayer.id = currentPrayer.id
+                newPrayerSwiftDataItem.id = currentPrayer.id
                 
-                items += [_prayer]
+                items += [newPrayerSwiftDataItem]
                 
             }
+            
             customPrayer.prayerSwiftDataItems = items
             modelContext.insert(customPrayer)
             
@@ -100,7 +102,32 @@ class PrayerData {
         return prayers
         
     }
-    
+
+    static func loadPrayersSwiftDataItemWithId(using context: ModelContext, prayer: Prayer) -> [PrayerSwiftDataItem] {
+                
+        var prayers: [PrayerSwiftDataItem] = []
+        
+        do {
+            
+            let descriptor = FetchDescriptor<PrayerSwiftDataItem>(
+                predicate: #Predicate {
+                    $0.id == prayer.id
+                },
+                sortBy: [SortDescriptor(\.orderIndex)]
+            )
+
+            let allPrayers = try context.fetch(descriptor)
+            
+            prayers = allPrayers
+            
+        } catch {
+            print("Error fetching prayers: \(error)")
+        }
+        
+        return prayers
+        
+    }
+
     static let prayers = [
         Prayer(
             name: "Our Father",

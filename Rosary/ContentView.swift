@@ -9,8 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    // @Query private var items: [PrayerSwiftDataItem]
+
     @State private var selectedTab: Int = 1
 
     var body: some View {
@@ -26,32 +25,22 @@ struct ContentView: View {
             AddCustomPrayerView()
                 .tabItem {
                     Image(systemName: "plus.app")
-                    Text("Add Custom Prayer")
+                    Text("Add Prayer")
                 }.tag(2)
             
+            ManageCustomPrayersView()
+                .tabItem {
+                    Image(systemName: "wrench.and.screwdriver.fill")
+                    Text("Manage Prayers")
+                }.tag(3)
             
             SettingsView()
                 .tabItem {
                     Image(systemName: "gear")
                     Text("Settings")
                 }
-                .tag(3)
+                .tag(4)
             
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            // let newItem = PrayerSwiftDataItem(data: "")
-            // modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                // modelContext.delete(items[index])
-            }
         }
     }
 }
