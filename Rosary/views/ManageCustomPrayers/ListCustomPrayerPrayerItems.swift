@@ -14,6 +14,18 @@ struct ListCustomPrayerPrayerItems: View {
     @State var prayers: [PrayerSwiftDataItem] = []
     @Environment(\.modelContext) var modelContext
     @State var show = false
+    @State var searchText = ""
+    
+    var filter: [PrayerSwiftDataItem] {
+        if searchText.isEmpty {
+            return customPrayer.prayerSwiftDataItems
+        }
+        return customPrayer.prayerSwiftDataItems.filter({ PrayerSwiftDataItem in
+            PrayerSwiftDataItem.name
+                .lowercased()
+                .contains(searchText.lowercased())
+        })
+    }
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -25,11 +37,19 @@ struct ListCustomPrayerPrayerItems: View {
             
             List {
                 Section("Prayers") {
-                    ForEach(customPrayer.prayerSwiftDataItems) { prayer in
+                    
+                    if filter.isEmpty {
+                        EmptyUIView()
+                    }
+                    
+                    ForEach(filter) { prayer in
                         NavigationLink(destination: EditPrayerSwiftDataItemView(item: prayer)) {
                             VStack(alignment: .leading) {
                                 Text(prayer.name)
-                                Text("\(prayer.id)")
+//                                Text("\(prayer.id)")
+//                                    .font(.caption)
+//                                    .foregroundColor(.secondary)
+                                Text("\(prayer.type)")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -44,6 +64,7 @@ struct ListCustomPrayerPrayerItems: View {
                     }
                 }
             }.listStyle(.plain)
+                .searchable(text: $searchText)
         }
         .toolbar {
             ToolbarItem(

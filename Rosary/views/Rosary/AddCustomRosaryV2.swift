@@ -464,28 +464,29 @@ struct SaveButtonToolBar: View {
     }
     
     func save() {
-        
         do {
-            // Check if a CustomPrayer with the same id already exists
-            let existing = try modelContext.fetch(
-                FetchDescriptor<CustomPrayer>(
-                    predicate: #Predicate { $0.id == uuid! }
-                )
-            ).first
-
             let customPrayer: CustomPrayer
 
-            if let found = existing {
-                // Update the existing CustomPrayer
-                customPrayer = found
-                customPrayer.prayerSwiftDataItems.removeAll()
+            if let id = uuid {
+                let existing = try modelContext.fetch(
+                    FetchDescriptor<CustomPrayer>(
+                        predicate: #Predicate { $0.id == id }
+                    )
+                ).first
+
+                if let found = existing {
+                    // Update existing
+                    customPrayer = found
+                    customPrayer.prayerSwiftDataItems.removeAll()
+                } else {
+                    // Create new
+                    customPrayer = CustomPrayer(name: title, orderIndex: 0, prayerSwiftDataItems: [])
+                    customPrayer.isRosary = true
+                    modelContext.insert(customPrayer)
+                }
             } else {
-                // Create a new one
-                customPrayer = CustomPrayer(
-                    name: title,
-                    orderIndex: 0,
-                    prayerSwiftDataItems: []
-                )
+                // No UUID, create new
+                customPrayer = CustomPrayer(name: title, orderIndex: 0, prayerSwiftDataItems: [])
                 customPrayer.isRosary = true
                 modelContext.insert(customPrayer)
             }
@@ -513,7 +514,7 @@ struct SaveButtonToolBar: View {
             try modelContext.save()
 
         } catch {
-            print("Save failed: \(error)")
+            print("❌ Save failed: \(error)")
         }
     }
 

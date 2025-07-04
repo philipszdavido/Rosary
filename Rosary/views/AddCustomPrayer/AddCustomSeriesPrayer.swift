@@ -78,11 +78,17 @@ struct AddCustomSeriesPrayer: View {
                     ToolbarItem(
                         placement: ToolbarItemPlacement.topBarTrailing) {
                             HStack {
-                                Button("Set Title") {
-                                    sheetPrayerTitleIsPresented.toggle()
-                                }
                                 
+                                Button("Save") {
+                                    onSave(modelContext, prayers)
+                                }.disabled(prayers.isEmpty)
+
                                 Menu {
+
+                                    Button("Set Title") {
+                                        sheetPrayerTitleIsPresented.toggle()
+                                    }
+
                                     Button("Add Prayer") {
                                         sheetIsPresented.toggle()
                                     }
@@ -99,10 +105,10 @@ struct AddCustomSeriesPrayer: View {
                         }
                 }
             
-            Spacer()
-            Button("Save") {
-                onSave(modelContext, prayers)
-            }.disabled(prayers.isEmpty)
+//            Spacer()
+//            Button("Save") {
+//                onSave(modelContext, prayers)
+//            }.disabled(prayers.isEmpty)
         
             
         }

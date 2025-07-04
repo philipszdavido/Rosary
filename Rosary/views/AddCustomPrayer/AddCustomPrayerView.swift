@@ -76,33 +76,61 @@ struct AddPrayerName: View {
             
             Spacer()
             
-            NavigationLink {
-                
-                if prayerType == .series {
-                    AddCustomSeriesPrayer(prayerTitle: text, onSave: { ctx, p in
-                        save(modelContext: ctx, prayerTitle: text, prayers: p)
-                    })
-                        .navigationBarBackButtonHidden(true)
-                }
-
-                if prayerType == .rosary {
-                    
-                    AddCustomRosaryV2(prayerTitle: text)
-                        .navigationBarBackButtonHidden(true)
-                }
-
-                if prayerType == .single {
-                    AddCustomSinglePrayer(prayerTitle: text)
-                }
-                
-            } label: {
-                Text("Next")
-            }
-            .disabled(text.isEmpty)
-            .frame(maxWidth: .infinity, maxHeight: 70)
-            //.background(.brown)
-            .padding()
+//            NavigationLink {
+//                
+//                if prayerType == .series {
+//                    AddCustomSeriesPrayer(prayerTitle: text, onSave: { ctx, p in
+//                        save(modelContext: ctx, prayerTitle: text, prayers: p)
+//                    })
+//                        .navigationBarBackButtonHidden(true)
+//                }
+//
+//                if prayerType == .rosary {
+//                    
+//                    AddCustomRosaryV2(prayerTitle: text)
+//                        .navigationBarBackButtonHidden(true)
+//                }
+//
+//                if prayerType == .single {
+//                    AddCustomSinglePrayer(prayerTitle: text)
+//                }
+//                
+//            } label: {
+//                Text("Next")
+//            }
+//            .disabled(text.isEmpty)
+//            .frame(maxWidth: .infinity, maxHeight: 70)
+//            .padding()
             
+        }.toolbar {
+            ToolbarItem(
+                placement: ToolbarItemPlacement.topBarTrailing) {
+                    
+                    NavigationLink {
+                        
+                        if prayerType == .series {
+                            AddCustomSeriesPrayer(prayerTitle: text, onSave: { ctx, p in
+                                save(modelContext: ctx, prayerTitle: text, prayers: p)
+                            })
+                            .navigationBarBackButtonHidden(true)
+                        }
+                        
+                        if prayerType == .rosary {
+                            
+                            AddCustomRosaryV2(prayerTitle: text)
+                                .navigationBarBackButtonHidden(true)
+                        }
+                        
+                        if prayerType == .single {
+                            AddCustomSinglePrayer(prayerTitle: text)
+                        }
+                        
+                    } label: {
+                        Text("Next")
+                    }
+                    .disabled(text.isEmpty)
+                    
+                }
         }
 
     }

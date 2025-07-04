@@ -58,6 +58,12 @@ struct EditPrayerSwiftDataItemView: View {
             }
 
             Section {
+
+                Button("Delete", role: .cancel) {
+                    delete()
+                    dismiss()
+                }.foregroundStyle(.red)
+
                 Button("Cancel", role: .cancel) {
                     dismiss()
                 }.foregroundStyle(.red)
@@ -81,6 +87,11 @@ struct EditPrayerSwiftDataItemView: View {
             print("❌ Save failed: \(error)")
         }
     }
+    
+    private func delete() {
+        modelContext.delete(item)
+    }
+    
 }
 
 #Preview {

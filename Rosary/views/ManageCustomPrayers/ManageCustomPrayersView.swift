@@ -12,20 +12,39 @@ struct ManageCustomPrayersView: View {
     
     @Environment(\.modelContext) var modelContext
     @Query var customPrayers: [CustomPrayer]
-    @Query var prayerSwiftDataItems: [PrayerSwiftDataItem]
+    @Query(
+        filter: #Predicate<PrayerSwiftDataItem>{ $0.customPrayer == nil }
+    ) var prayerSwiftDataItems: [PrayerSwiftDataItem]
+    @State var searchText = ""
+    
+    var filter: [CustomPrayer] {
+        if searchText.isEmpty {
+            return customPrayers
+        }
+        return customPrayers.filter({ CustomPrayer in
+            CustomPrayer.name
+                .lowercased()
+                .contains(searchText.lowercased())
+        })
+    }
     
     var body: some View {
         NavigationView {
             List {
-                ForEach(customPrayers) { customPrayer in
+                
+                if filter.isEmpty {
+                    EmptyUIView()
+                }
+                
+                ForEach(filter) { customPrayer in
                     
                     NavigationLink {
                         ListCustomPrayerPrayerItems(customPrayer: customPrayer)
                     } label: {
                         VStack(alignment: .leading) {
                             Text(customPrayer.name)
-                            Text("\(customPrayer.id)")
-                            Text(customPrayer.isRosary ? " (Rosary)" : "")
+                            // Text("\(customPrayer.id)")
+                            // Text(customPrayer.isRosary ? " (Rosary)" : "")
                         }
                     }
                     
@@ -37,20 +56,25 @@ struct ManageCustomPrayersView: View {
                     }
                 }
                 
-//                Section("All prayers") {
-//                    ForEach(prayerSwiftDataItems) { p in
-//                        VStack(alignment: .leading) {
-//                            Text(p.name)
-//                            if let p = p.customPrayer {
-//                                Text("\(p.id)")
-//                            }
-//                        }
-//                    }.onDelete { IndexSet in
-//                        for index in IndexSet {
-//                            modelContext.delete(prayerSwiftDataItems[index])
-//                        }
-//                    }
-//                }
+                Section("All Single prayers") {
+                    
+                    if prayerSwiftDataItems.isEmpty {
+                        EmptyUIView()
+                    }
+                    
+                    ForEach(prayerSwiftDataItems) { p in
+                        VStack(alignment: .leading) {
+                            Text(p.name)
+                            if let p = p.customPrayer {
+                                Text("\(p.id)")
+                            }
+                        }
+                    }.onDelete { IndexSet in
+                        for index in IndexSet {
+                            modelContext.delete(prayerSwiftDataItems[index])
+                        }
+                    }
+                }
                 
             }
             .listStyle(.plain)
@@ -60,6 +84,7 @@ struct ManageCustomPrayersView: View {
                         EditButton()
                     }
             }
+            .searchable(text: $searchText)
         }
     }
 }

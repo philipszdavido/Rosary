@@ -64,16 +64,17 @@ struct AddCustomSinglePrayer: View {
                             }
 
                             do {
-                                
-                                let existing = try modelContext.fetch(
-                                    FetchDescriptor<PrayerSwiftDataItem>(
-                                        predicate: #Predicate { $0.id == uuid! }
+                                if let id = uuid {
+                                    let existing = try modelContext.fetch(
+                                        FetchDescriptor<PrayerSwiftDataItem>(
+                                            predicate: #Predicate { $0.id == id }
+                                        )
                                     )
-                                )
 
-                                guard existing.isEmpty else {
-                                    print("Prayer with title already exists")
-                                    return
+                                    guard existing.isEmpty else {
+                                        print("Prayer with title already exists")
+                                        return
+                                    }
                                 }
 
                                 let prayerToSave = PrayerSwiftDataItem(
@@ -81,9 +82,9 @@ struct AddCustomSinglePrayer: View {
                                     data: inputText,
                                     orderIndex: 0
                                 )
-                                
+
                                 uuid = prayerToSave.id
-                                
+
                                 modelContext.insert(prayerToSave)
                                 try modelContext.save()
 
@@ -95,7 +96,7 @@ struct AddCustomSinglePrayer: View {
                                 print("❌ Error saving single prayer: \(error.localizedDescription)")
                             }
                         }.disabled(inputText.count == 0)
-                        
+
                     }
             }
         .toolbar(.hidden, for: .tabBar)

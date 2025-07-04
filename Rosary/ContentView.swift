@@ -28,6 +28,7 @@ struct ContentView: View {
                     Text("Add Prayer")
                 }.tag(2)
             
+            
             ManageCustomPrayersView()
                 .tabItem {
                     Image(systemName: "wrench.and.screwdriver.fill")
