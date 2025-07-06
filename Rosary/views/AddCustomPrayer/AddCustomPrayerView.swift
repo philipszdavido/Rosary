@@ -45,12 +45,14 @@ struct AddCustomPrayerView: View {
 
 #Preview {
     AddCustomPrayerView()
+        .environmentObject(GlobalSettings())
         .modelContainer(for: PrayerSwiftDataItem.self, inMemory: true)
 }
 
 #Preview {
     NavigationView {
         AddPrayerName(prayerType: PrayerEnum.single)
+            .environmentObject(GlobalSettings())
             .modelContainer(for: PrayerSwiftDataItem.self, inMemory: true)
     }
 }
@@ -59,50 +61,72 @@ struct AddPrayerName: View {
         
     @State private var text = ""
     public var prayerType: PrayerEnum
+    @State private var isPresented = false
     
     var body: some View {
         
-        VStack {
-            
-            TextField(text: Binding<String>(
-                get: { text },
-                set: { text = $0 }
-            )) {
-                Text("Enter prayer name...")
+        NavigationStack {
+            VStack {
+                
+                TextField(text: Binding<String>(
+                    get: { text },
+                    set: { text = $0 }
+                )) {
+                    Text("Enter prayer name...")
+                }
+                .submitLabel(.done)
+                .onSubmit {
+                    if !text.isEmpty {
+                        isPresented.toggle()
+                    }
+                }
+                .padding()
+                .border(.primary, width: 1)
+                .padding()
+                
+                Spacer()
+                
+                //            NavigationLink {
+                //
+                //                if prayerType == .series {
+                //                    AddCustomSeriesPrayer(prayerTitle: text, onSave: { ctx, p in
+                //                        save(modelContext: ctx, prayerTitle: text, prayers: p)
+                //                    })
+                //                        .navigationBarBackButtonHidden(true)
+                //                }
+                //
+                //                if prayerType == .rosary {
+                //
+                //                    AddCustomRosaryV2(prayerTitle: text)
+                //                        .navigationBarBackButtonHidden(true)
+                //                }
+                //
+                //                if prayerType == .single {
+                //                    AddCustomSinglePrayer(prayerTitle: text)
+                //                }
+                //
+                //            } label: {
+                //                Text("Next")
+                //            }
+                //            .disabled(text.isEmpty)
+                //            .frame(maxWidth: .infinity, maxHeight: 70)
+                //            .padding()
+                
             }
-            .padding()
-            .border(.primary, width: 1)
-            .padding()
+            .navigationDestination(isPresented: $isPresented) {
+                                
+                switch prayerType {
+                case .series: AddCustomSeriesPrayer(prayerTitle: text, onSave: { ctx, p in
+                    save(modelContext: ctx, prayerTitle: text, prayers: p)
+                }).navigationBarBackButtonHidden(true)
+                case .rosary: AddCustomRosaryV2(prayerTitle: text).navigationBarBackButtonHidden(true)
+                case .single: AddCustomSinglePrayer(prayerTitle: text)
+                case .bead: EmptyView()
+                }
+                
+            }
             
-            Spacer()
-            
-//            NavigationLink {
-//                
-//                if prayerType == .series {
-//                    AddCustomSeriesPrayer(prayerTitle: text, onSave: { ctx, p in
-//                        save(modelContext: ctx, prayerTitle: text, prayers: p)
-//                    })
-//                        .navigationBarBackButtonHidden(true)
-//                }
-//
-//                if prayerType == .rosary {
-//                    
-//                    AddCustomRosaryV2(prayerTitle: text)
-//                        .navigationBarBackButtonHidden(true)
-//                }
-//
-//                if prayerType == .single {
-//                    AddCustomSinglePrayer(prayerTitle: text)
-//                }
-//                
-//            } label: {
-//                Text("Next")
-//            }
-//            .disabled(text.isEmpty)
-//            .frame(maxWidth: .infinity, maxHeight: 70)
-//            .padding()
-            
-        }.toolbar {
+        } .toolbar {
             ToolbarItem(
                 placement: ToolbarItemPlacement.topBarTrailing) {
                     

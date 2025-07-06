@@ -197,18 +197,18 @@ struct NavLink: View {
     public var customPrayer: CustomPrayer
     
     var body: some View {
-        
-        if customPrayer.isRosary {
             
-            AddCustomRosaryV2(
-                prayerTitle: customPrayer.name,
-                prayerSections: convertToSections(prayerSwiftDataItems: customPrayer.prayerSwiftDataItems)
-            ).navigationBarBackButtonHidden()
-            
-        } else {
-            
-            ListCustomPrayerPrayerItems(customPrayer: customPrayer)
-        }
+            if customPrayer.isRosary {
+                
+                AddCustomRosaryV2(
+                    prayerTitle: customPrayer.name,
+                    prayerSections: convertToSections(prayerSwiftDataItems: customPrayer.prayerSwiftDataItems)
+                ).navigationBarBackButtonHidden()
+                
+            } else {
+                
+                ListCustomPrayerPrayerItems(customPrayer: customPrayer)
+            }
 
     }
     
@@ -216,16 +216,16 @@ struct NavLink: View {
         
         var set: [String: PrayerSection] = [:]
         
-        for prayer in prayerSwiftDataItems {
+        for (index, prayer) in prayerSwiftDataItems.enumerated() {
 
             if let sectionId = prayer.sectionId {
                 
                 // check to see if prayers's section is in set
                 
-                if set[sectionId.uuidString] != nil {
+                if set[sectionId.uuidString] == nil {
                     
                     var section = PrayerSection(
-                        name: prayer.name,
+                        name: index.description,
                         type: prayer.type == .bead ? .decade : .normal,
                         prayers: [ Prayer(from: prayer) ]
                     )
@@ -262,4 +262,15 @@ struct NavLink: View {
         return p
         
     }
+}
+
+#Preview {
+            
+        TabView(selection: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Selection@*/.constant(1)/*@END_MENU_TOKEN@*/) {
+            ManageCustomPrayersView().tabItem { Text("Manage Custom Prayers") }.tag(1)
+            AddCustomPrayerView().tabItem { Text("Add Custom Prayer") }.tag(2)
+        }
+        .environmentObject(GlobalSettings())
+        .modelContainer(for: PrayerSwiftDataItem.self, inMemory: true)
+        .modelContainer(for: CustomPrayer.self, inMemory: true)
 }

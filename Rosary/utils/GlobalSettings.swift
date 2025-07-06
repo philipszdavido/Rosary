@@ -179,6 +179,8 @@ class GlobalSettings: ObservableObject {
         }
     }
     
+    @Published var showTabBar: Bool = true
+    
     func color(for type: BeadColorType) -> Color {
         beadColors[type] ?? type.defaultColor
     }

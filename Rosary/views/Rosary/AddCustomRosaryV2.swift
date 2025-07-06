@@ -57,6 +57,8 @@ struct AddCustomRosaryV2: View {
     
     @Environment(\.dismiss) private var dismiss;
     @Environment(\.modelContext) private var modelContext;
+    @EnvironmentObject var settings: GlobalSettings
+    
     @State var prayers: [Prayer] = [];
     @State private var sheetIsPresented: Bool = false
     @State private var sheetPrayerTitleIsPresented = false
@@ -162,6 +164,7 @@ struct AddCustomRosaryV2: View {
                     placement: ToolbarItemPlacement.topBarLeading) {
                         HStack {
                             Button {
+                                settings.showTabBar = true
                                 dismiss()
                             } label: {
                                 Image(systemName: "chevron.left")
@@ -182,7 +185,7 @@ struct AddCustomRosaryV2: View {
             }
 
         }
-        .toolbar(.hidden, for: .tabBar)
+        .toolbar(settings.showTabBar ? .visible : .hidden, for: .tabBar)
     }
     
     func action(
@@ -550,4 +553,5 @@ struct SaveButtonToolBar: View {
 
 #Preview {
         AddCustomRosaryV2(prayerTitle: "Ten Decades")
+        .environmentObject(GlobalSettings())
 }
