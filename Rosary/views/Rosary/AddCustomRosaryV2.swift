@@ -18,16 +18,30 @@ enum ActionType: Int {
     case populateSectionWithDecadePrayer;
 }
 
-enum PrayerSectionType: Int, Codable {
+enum PrayerSectionType: String, Codable, CaseIterable {
     case decade
     case normal
 }
 
 struct PrayerSection: Identifiable, Codable {
+
     var id = UUID()
-    var name: String;
-    var type: PrayerSectionType;
+    var name: String
+    var type: PrayerSectionType
     var prayers: [Prayer]
+
+    init(
+        id: UUID = UUID(),
+        name: String,
+        type: PrayerSectionType,
+        prayers: [Prayer]
+    ) {
+        self.id = id
+        self.name = name
+        self.type = type
+        self.prayers = prayers
+    }
+    
 }
 
 extension View {
@@ -51,6 +65,32 @@ struct AddCustomRosaryV2: View {
     @State var searchText = ""
     @State public var prayerTitle: String
     
+    @State var prayerSections: [PrayerSection]
+
+    init(
+        prayerTitle: String,
+        prayerSections: [PrayerSection]
+    ) {
+        self.prayerTitle = prayerTitle
+        self.prayerSections = prayerSections
+    }
+    
+    init(prayerTitle: String) {
+        self.prayerTitle = prayerTitle
+        self.prayerSections = [
+            PrayerSection(
+                name: "0",
+                type: PrayerSectionType.normal,
+                prayers: [
+                    PrayerData.constructPrayer(
+                        PrayerData.signOfTheCross,
+                        name: "Sign of the Cross"
+                    )
+                ]
+            )
+        ]
+    }
+    
     func decade() -> [Prayer] {
         
         var decadePrayers: [Prayer] = []
@@ -71,20 +111,7 @@ struct AddCustomRosaryV2: View {
         return decadePrayers
         
     }
-    
-    @State var prayerSections: [PrayerSection] = [
-        PrayerSection(
-            name: "Beginning",
-            type: PrayerSectionType.normal,
-            prayers: [
-                PrayerData.constructPrayer(
-                    PrayerData.signOfTheCross,
-                    name: "Sign of the Cross"
-                )
-            ]
-        )
-    ]
-    
+        
     var body: some View {
         
         NavigationView {
@@ -502,6 +529,7 @@ struct SaveButtonToolBar: View {
                             data: prayer.data,
                             orderIndex: 0,
                             type: prayer.type,
+                            sectionId: prayer.sectionId ?? UUID(),
                             customPrayer: customPrayer
                         )
                     )

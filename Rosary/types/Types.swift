@@ -17,6 +17,7 @@ struct Prayer: Identifiable, Hashable, Codable {
     let id: UUID
     var name: String
     var type: PrayerEnum
+    var sectionId: UUID?
     var data: String
 
     init(id: UUID = UUID(), name: String, type: PrayerEnum, data: String) {

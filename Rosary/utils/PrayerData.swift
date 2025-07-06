@@ -62,6 +62,10 @@ class PrayerData {
             
             customPrayer.id = prayer.id
             
+            if prayer.type == .rosary {
+                customPrayer.isRosary = true
+            }
+                        
             for currentPrayer in prayers {
                 
                 let newPrayerSwiftDataItem = PrayerSwiftDataItem(

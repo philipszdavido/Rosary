@@ -15,6 +15,7 @@ class PrayerSwiftDataItem {
     var data: String
     var orderIndex: Int
     var type: PrayerEnum
+    var sectionId: UUID?
     var customPrayer: CustomPrayer?
 
     init(
@@ -42,6 +43,23 @@ class PrayerSwiftDataItem {
         self.orderIndex = orderIndex
         self.type = type
     }
+    
+    init(
+        name: String,
+        data: String,
+        orderIndex: Int,
+        type: PrayerEnum = .single,
+        sectionId: UUID = UUID(),
+        customPrayer: CustomPrayer
+    ) {
+        self.name = name
+        self.data = data
+        self.orderIndex = orderIndex
+        self.sectionId = sectionId
+        self.customPrayer = customPrayer
+        self.type = type
+    }
+
 
 }
 

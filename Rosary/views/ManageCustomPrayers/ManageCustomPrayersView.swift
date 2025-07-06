@@ -51,14 +51,18 @@ struct ManageCustomPrayersView: View {
                     }
 
                     ForEach(filter) { customPrayer in
+                        
                         NavigationLink {
-                            ListCustomPrayerPrayerItems(customPrayer: customPrayer)
+                            
+                            NavLink(customPrayer: customPrayer)
+                            
                         } label: {
                             VStack(alignment: .leading) {
                                 Text(customPrayer.name)
                             }
                         }
                         .listRowSeparator(.hidden)
+                        
                     }
                     .onDelete { indexSet in
                         withAnimation {
@@ -160,7 +164,10 @@ struct ManageCustomPrayersView_Preview: PreviewProvider {
             PrayerData.save(
                 modelContext: modelContext,
                 prayerTitle: "Ten Decades",
-                prayers: [PrayerData.hailMaryPrayer()],
+                prayers: [
+                    PrayerData.hailMaryPrayer(),
+                    PrayerData.gloryBePrayer(.bead)
+                ],
                 prayer: Prayer(
                     name: "Ten Decades",
                     type: PrayerEnum.rosary,
@@ -183,4 +190,76 @@ struct ManageCustomPrayersView_Preview: PreviewProvider {
         }
     }
     
+}
+
+struct NavLink: View {
+    
+    public var customPrayer: CustomPrayer
+    
+    var body: some View {
+        
+        if customPrayer.isRosary {
+            
+            AddCustomRosaryV2(
+                prayerTitle: customPrayer.name,
+                prayerSections: convertToSections(prayerSwiftDataItems: customPrayer.prayerSwiftDataItems)
+            ).navigationBarBackButtonHidden()
+            
+        } else {
+            
+            ListCustomPrayerPrayerItems(customPrayer: customPrayer)
+        }
+
+    }
+    
+    func convertToSections(prayerSwiftDataItems: [PrayerSwiftDataItem]) -> [PrayerSection] {
+        
+        var set: [String: PrayerSection] = [:]
+        
+        for prayer in prayerSwiftDataItems {
+
+            if let sectionId = prayer.sectionId {
+                
+                // check to see if prayers's section is in set
+                
+                if set[sectionId.uuidString] != nil {
+                    
+                    var section = PrayerSection(
+                        name: prayer.name,
+                        type: prayer.type == .bead ? .decade : .normal,
+                        prayers: [ Prayer(from: prayer) ]
+                    )
+                    
+                    section.id = sectionId
+                    
+                    set[sectionId.uuidString] = section;
+                    
+                } else {
+                    
+                    set[sectionId.uuidString]?.prayers.append(Prayer(from: prayer))
+                }
+                
+            } else {
+                
+                let section = PrayerSection(
+                    name: prayer.name,
+                    type: prayer.type == .bead ? .decade : .normal,
+                    prayers: [ Prayer(from: prayer) ]
+                )
+                
+                set[section.id.uuidString] = section;
+
+            }
+            
+        }
+        
+        var p: [PrayerSection] = []
+        
+        for (_, prayerSection) in set {
+            p.append(prayerSection)
+        }
+
+        return p
+        
+    }
 }
