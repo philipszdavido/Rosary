@@ -19,6 +19,7 @@ extension Prayer {
         self.name = dataItem.name
         self.type = dataItem.type
         self.data = dataItem.data
+        self.sectionId = dataItem.sectionId
         self.id = dataItem.id
     }
 }

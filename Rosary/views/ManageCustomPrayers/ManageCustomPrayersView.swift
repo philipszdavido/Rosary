@@ -213,55 +213,40 @@ struct NavLink: View {
     }
     
     func convertToSections(prayerSwiftDataItems: [PrayerSwiftDataItem]) -> [PrayerSection] {
-        
-        var set: [String: PrayerSection] = [:]
-        
-        for (index, prayer) in prayerSwiftDataItems.enumerated() {
+        var sectionMap: [UUID: PrayerSection] = [:]
 
-            if let sectionId = prayer.sectionId {
-                
-                // check to see if prayers's section is in set
-                
-                if set[sectionId.uuidString] == nil {
-                    
-                    var section = PrayerSection(
-                        name: index.description,
-                        type: prayer.type == .bead ? .decade : .normal,
-                        prayers: [ Prayer(from: prayer) ]
-                    )
-                    
-                    section.id = sectionId
-                    
-                    set[sectionId.uuidString] = section;
-                    
+        for (index, item) in prayerSwiftDataItems.enumerated() {
+            let prayer = Prayer(from: item)
+            let sectionType: PrayerSectionType = item.type == .bead ? .decade : .normal
+
+            if let sectionId = item.sectionId {
+                if var section = sectionMap[sectionId] {
+                    section.prayers.append(prayer)
+                    sectionMap[sectionId] = section  // ✅ Must reassign due to struct value semantics
                 } else {
-                    
-                    set[sectionId.uuidString]?.prayers.append(Prayer(from: prayer))
+                    let newSection = PrayerSection(
+                        id: sectionId,
+                        name: item.name, // Or "\(index)" if you want index-based names
+                        type: sectionType,
+                        prayers: [prayer]
+                    )
+                    sectionMap[sectionId] = newSection
                 }
-                
             } else {
-                
-                let section = PrayerSection(
-                    name: prayer.name,
-                    type: prayer.type == .bead ? .decade : .normal,
-                    prayers: [ Prayer(from: prayer) ]
+                let newId = UUID()
+                let standaloneSection = PrayerSection(
+                    id: newId,
+                    name: item.name,
+                    type: sectionType,
+                    prayers: [prayer]
                 )
-                
-                set[section.id.uuidString] = section;
-
+                sectionMap[newId] = standaloneSection
             }
-            
-        }
-        
-        var p: [PrayerSection] = []
-        
-        for (_, prayerSection) in set {
-            p.append(prayerSection)
         }
 
-        return p
-        
+        return Array(sectionMap.values)
     }
+    
 }
 
 #Preview {

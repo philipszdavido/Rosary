@@ -79,35 +79,50 @@ struct AddCustomRosaryV2: View {
     
     init(prayerTitle: String) {
         self.prayerTitle = prayerTitle
+        var initPrayer = PrayerData.constructPrayer(
+            PrayerData.signOfTheCross,
+            name: "Sign of the Cross"
+        )
+        
+        var initPrayerSection = PrayerSection(
+            name: "0",
+            type: PrayerSectionType.normal,
+            prayers: []
+        )
+        
+        initPrayer.sectionId = initPrayerSection.id
+        initPrayerSection.prayers += [initPrayer]
+        
         self.prayerSections = [
-            PrayerSection(
-                name: "0",
-                type: PrayerSectionType.normal,
-                prayers: [
-                    PrayerData.constructPrayer(
-                        PrayerData.signOfTheCross,
-                        name: "Sign of the Cross"
-                    )
-                ]
-            )
+            initPrayerSection
         ]
+        
     }
     
-    func decade() -> [Prayer] {
+    func decade(sectionId: UUID) -> [Prayer] {
         
         var decadePrayers: [Prayer] = []
         
+        var ourFatherPrayer = PrayerData.ourFatherPrayer(.bead)
+        ourFatherPrayer.sectionId = sectionId
+        
+        var hailMaryPrayer = PrayerData.hailMaryPrayer(.bead)
+        hailMaryPrayer.sectionId = sectionId
+        
+        var gloryBePrayer = PrayerData.gloryBePrayer()
+        gloryBePrayer.sectionId = sectionId
+        
         decadePrayers += [
-            PrayerData.ourFatherPrayer(.bead)
+            ourFatherPrayer
         ]
         
         for _ in 0..<10 {
             decadePrayers += [
-                PrayerData.hailMaryPrayer(.bead),
+                hailMaryPrayer,
             ]
         }
         decadePrayers += [
-            PrayerData.gloryBePrayer()
+            gloryBePrayer
         ]
         
         return decadePrayers
@@ -131,25 +146,35 @@ struct AddCustomRosaryV2: View {
                 }
                 
                 HStack {
+                    
                     Button("Add new section") {
+                        
                         prayerSections += [
                             PrayerSection(
-                                name: "New section",
+                                name: "\(prayerSections.count)",
                                 type: PrayerSectionType.normal,
                                 prayers: []
                             )
                         ]
+                        
                     }.setStyle()
+                    
                     Button("Add new decade section") {
-                        prayerSections += [
-                            PrayerSection(
-                                name: "New decade",
-                                type: PrayerSectionType.decade,
-                                prayers: decade()
-                            )
-                        ]
+                        
+                        var section = PrayerSection(
+                            name: "\(prayerSections.count)",
+                            type: PrayerSectionType.decade,
+                            prayers: []
+                        )
+                        
+                        section.prayers = decade(sectionId: section.id)
+                        
+                        prayerSections += [section]
+                        
                     }.setStyle()
+                    
                     Spacer()
+                    
                 }.padding(.top)
                 
             }
@@ -279,7 +304,7 @@ struct AddCustomRosaryV2: View {
 
         case .addPrayerToSection:
             
-            if let _prayer = prayer {
+            if var _prayer = prayer {
                 
                 prayerSections = prayerSections.map({ PrayerSection in
                     
@@ -287,6 +312,7 @@ struct AddCustomRosaryV2: View {
                     
                     if p.id == section.id {
                         
+                        _prayer.sectionId = section.id
                         p.prayers += [_prayer]
                         
                         return p
@@ -317,8 +343,8 @@ struct AddCustomRosaryV2: View {
                 var p = PrayerSection
                 
                 if p.id == section.id {
-                    
-                    p.prayers += decade()
+                                        
+                    p.prayers += decade(sectionId: section.id)
                     
                     return p
                 }

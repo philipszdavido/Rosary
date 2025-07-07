@@ -65,7 +65,6 @@ struct AddPrayerName: View {
     
     var body: some View {
         
-        NavigationStack {
             VStack {
                 
                 TextField(text: Binding<String>(
@@ -85,33 +84,7 @@ struct AddPrayerName: View {
                 .padding()
                 
                 Spacer()
-                
-                //            NavigationLink {
-                //
-                //                if prayerType == .series {
-                //                    AddCustomSeriesPrayer(prayerTitle: text, onSave: { ctx, p in
-                //                        save(modelContext: ctx, prayerTitle: text, prayers: p)
-                //                    })
-                //                        .navigationBarBackButtonHidden(true)
-                //                }
-                //
-                //                if prayerType == .rosary {
-                //
-                //                    AddCustomRosaryV2(prayerTitle: text)
-                //                        .navigationBarBackButtonHidden(true)
-                //                }
-                //
-                //                if prayerType == .single {
-                //                    AddCustomSinglePrayer(prayerTitle: text)
-                //                }
-                //
-                //            } label: {
-                //                Text("Next")
-                //            }
-                //            .disabled(text.isEmpty)
-                //            .frame(maxWidth: .infinity, maxHeight: 70)
-                //            .padding()
-                
+                                
             }
             .navigationDestination(isPresented: $isPresented) {
                                 
@@ -123,9 +96,7 @@ struct AddPrayerName: View {
                 case .single: AddCustomSinglePrayer(prayerTitle: text)
                 case .bead: EmptyView()
                 }
-                
-            }
-            
+                            
         } .toolbar {
             ToolbarItem(
                 placement: ToolbarItemPlacement.topBarTrailing) {
