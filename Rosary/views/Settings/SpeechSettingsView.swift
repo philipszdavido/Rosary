@@ -19,20 +19,39 @@ struct SpeechSettingsView: View {
     var body: some View {
         
         List {
-            Section {
-                VStack {
+                
+                Section {
                     Toggle("Speak Prayer", isOn: Binding<Bool>(
                         get: { settings.speakAloud },
                         set: { _ in settings.speakAloud.toggle() }
                     ))
-                    
+                }
+                
+                Section("Select Voice") {
                     NavigationLink(
                         destination:  ListOfVoices()
                     ) {
                         Text("Select Voice (\(formatVoiceDisplay))")
                     }
                 }
-            }
+                
+            Section(
+                "Voice Speed: " + "\(settings.voiceRate)"
+            ) {
+                    Slider(
+                        value: $settings.voiceRate,
+                        in: 0...1,
+                        step: 0.01
+                    ) {
+                        Text("Speed")
+                    } minimumValueLabel: {
+                        Text("0")
+                    } maximumValueLabel: {
+                        Text("1")
+                    } onEditingChanged: { editing in
+                    }
+                }
+            
         }
     }
 }

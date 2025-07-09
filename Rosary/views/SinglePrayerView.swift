@@ -77,8 +77,8 @@ struct SinglePrayerView: View {
             .padding()
 
         }.onAppear{
-            speaker.voice = settings.voice
-            speaker.speakAloud = settings.speakAloud
+            // speaker.voice = settings.voice
+            // speaker.speakAloud = settings.speakAloud
         }
         
     }

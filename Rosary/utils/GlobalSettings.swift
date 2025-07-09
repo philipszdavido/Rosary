@@ -181,6 +181,13 @@ class GlobalSettings: ObservableObject {
     
     @Published var showTabBar: Bool = true
     
+    @Published var voiceRate: Float
+    {
+        didSet {
+            userDefaults.set(voiceRate, forKey: "voiceRate")
+        }
+    }
+    
     func color(for type: BeadColorType) -> Color {
         beadColors[type] ?? type.defaultColor
     }
@@ -210,7 +217,8 @@ class GlobalSettings: ObservableObject {
         
         self.voice = userDefaults.string(forKey: "voice") ?? "com.apple.ttsbundle.Samantha-compact"
         self.speakAloud = userDefaults.bool(forKey: "speakAloud") ?? true
-        
+        self.voiceRate = userDefaults.float(forKey: "voiceRate") ?? 0.45
+
         for simplePrayerCase in SimplePrayerSettings.allCases {
             switch simplePrayerCase {
             case .borderColor:
@@ -219,7 +227,7 @@ class GlobalSettings: ObservableObject {
                 }
             }
         }
-
+        
     }
     
 }

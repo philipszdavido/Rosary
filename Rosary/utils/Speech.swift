@@ -24,8 +24,11 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
     @Published var isPaused = false
     @Published var currentWordRange: NSRange?
     @Published var spokenWord: String = ""
-    var voice = "com.apple.ttsbundle.Samantha-compact"
-    var speakAloud = true
+    @Published var voice = "com.apple.ttsbundle.Samantha-compact"
+    @Published var speakAloud = true
+    @Published var rate: Float = 0.45
+    
+    var settings = GlobalSettings()
     
     var prayerQueue: [Prayer] = []
     var isAuto = false
@@ -36,6 +39,20 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
         super.init()
         configureAudioSession()
         synthesizer.delegate = self
+        
+        self.rate = settings.voiceRate
+        self.speakAloud = settings.speakAloud
+        self.voice = settings.voice
+    }
+    
+    init(settings: GlobalSettings) {
+        super.init()
+        configureAudioSession()
+        synthesizer.delegate = self
+        
+        self.rate = settings.voiceRate
+        self.speakAloud = settings.speakAloud
+        self.voice = settings.voice        
     }
     
     func configureAudioSession() {
@@ -67,7 +84,7 @@ class PrayerSpeaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
 
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(identifier: voice)
-        utterance.rate = 0.45  // Adjust for better word highlighting timing
+        utterance.rate = rate  // Adjust for better word highlighting timing
         
         if !speakAloud {
             utterance.volume = 0  // This mutes the audio output
@@ -229,7 +246,7 @@ class RosarySpeaker: PrayerSpeaker {
         let currentPrayer = prayerQueue[prayerIndex]
         
         if currentPrayer.type == .bead {
-            print(prayerIndex, self.previousCurrentPrayerIndex)
+
             if prayerIndex <= 0 {
                 bead = -1
                 return
