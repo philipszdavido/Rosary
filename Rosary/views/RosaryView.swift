@@ -163,11 +163,6 @@ struct RosaryView: View {
             }
             
         }
-            .onAppear {
-                //speaker.voice = settings.voice
-                //speaker.speakAloud = settings.speakAloud
-            }
-        
         
     }
     
